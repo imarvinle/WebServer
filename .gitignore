@@ -1,6 +1,7 @@
 # idea files
 cmake-build-debug
 .*/
+.*
 
 
 # Object files
