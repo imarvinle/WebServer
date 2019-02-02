@@ -23,6 +23,8 @@ std::unordered_map<std::string, parse::HttpRequest::HTTP_HEADER> parse::HttpRequ
 
 // 解析一行内容, buffer[checked_index, read_index)
 // check_index是需要分析的第一个字符， read_index已经读取数据末尾下一个字符
+
+
 parse::HttpRequestParser::LINE_STATE
 parse::HttpRequestParser::parse_line(char *buffer, int &checked_index, int &read_index) {
     char temp;
