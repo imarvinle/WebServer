@@ -10,23 +10,22 @@
 #include <algorithm>
 
 
-std::unordered_map<std::string, parse::HttpRequest::HTTP_HEADER> parse::HttpRequest::header_map = {
-        {"HOST",            parse::HttpRequest::Host},
-        {"USER-AGENT",      parse::HttpRequest::User_Agent},
-        {"CONNECTION",      parse::HttpRequest::Connection},
-        {"ACCEPT-ENCODING", parse::HttpRequest::Accept_Encoding},
-        {"ACCEPT-LANGUAGE", parse::HttpRequest::Accept_Language},
-        {"ACCEPT",          parse::HttpRequest::Accept},
-        {"CACHE-CONTROL",   parse::HttpRequest::Cache_Control},
-        {"UPGRADE-INSECURE-REQUESTS", parse::HttpRequest::Upgrade_Insecure_Requests}
+std::unordered_map<std::string, http::HttpRequest::HTTP_HEADER> http::HttpRequest::header_map = {
+        {"HOST",                      http::HttpRequest::Host},
+        {"USER-AGENT",                http::HttpRequest::User_Agent},
+        {"CONNECTION",                http::HttpRequest::Connection},
+        {"ACCEPT-ENCODING",           http::HttpRequest::Accept_Encoding},
+        {"ACCEPT-LANGUAGE",           http::HttpRequest::Accept_Language},
+        {"ACCEPT",                    http::HttpRequest::Accept},
+        {"CACHE-CONTROL",             http::HttpRequest::Cache_Control},
+        {"UPGRADE-INSECURE-REQUESTS", http::HttpRequest::Upgrade_Insecure_Requests}
 };
+
 
 // 解析一行内容, buffer[checked_index, read_index)
 // check_index是需要分析的第一个字符， read_index已经读取数据末尾下一个字符
-
-
-parse::HttpRequestParser::LINE_STATE
-parse::HttpRequestParser::parse_line(char *buffer, int &checked_index, int &read_index) {
+http::HttpRequestParser::LINE_STATE
+http::HttpRequestParser::parse_line(char *buffer, int &checked_index, int &read_index) {
     char temp;
     for (; checked_index < read_index; checked_index++) {
         temp = buffer[checked_index];
@@ -49,8 +48,8 @@ parse::HttpRequestParser::parse_line(char *buffer, int &checked_index, int &read
 }
 
 // 解析请求行
-parse::HttpRequestParser::HTTP_CODE
-parse::HttpRequestParser::parse_requestline(char *line, PARSE_STATE &parse_state, HttpRequest &request) {
+http::HttpRequestParser::HTTP_CODE
+http::HttpRequestParser::parse_requestline(char *line, PARSE_STATE &parse_state, HttpRequest &request) {
     char *url = strpbrk(line, " \t");
     if (!url) {
         return BAD_REQUEST;
@@ -100,24 +99,28 @@ parse::HttpRequestParser::parse_requestline(char *line, PARSE_STATE &parse_state
     if (!url || *url != '/') {
         return BAD_REQUEST;
     }
-    request.mUrl = std::string(url);
+    request.mUri = std::string(url);
     // 分析头部字段
     parse_state = PARSE_HEADER;
     return NO_REQUEST;
 }
 
 // 分析头部字段
-parse::HttpRequestParser::HTTP_CODE
-parse::HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, HttpRequest &request) {
+http::HttpRequestParser::HTTP_CODE
+http::HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, HttpRequest &request) {
 
     if (*line == '\0') {
         if (request.mMethod == HttpRequest::GET) {
             return GET_REQUEST;
         }
         parse_state = PARSE_BODY;
-        return GET_REQUEST;
+        return NO_REQUEST;
     }
-    char key[20], value[100];
+
+    // char key[20]曾被缓冲区溢出
+    char key[100], value[100];
+
+    // 需要修改有些value里也包含了':'符号
     sscanf(line, "%[^:]:%[^:]", key, value);
 
 
@@ -126,7 +129,7 @@ parse::HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, Ht
     std::transform(key_s.begin(), key_s.end(), key_s.begin(), ::toupper);
     std::string value_s(value);
     std::cout << key_s << std::endl;
-    if (key_s == "UPGRADE-INSECURE-REQUESTS") {
+    if (key_s == std::string("UPGRADE-INSECURE-REQUESTS")) {
         return NO_REQUEST;
     }
 
@@ -140,16 +143,16 @@ parse::HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, Ht
 }
 
 // 解析body
-parse::HttpRequestParser::HTTP_CODE
-parse::HttpRequestParser::parse_body(char *body, parse::HttpRequest &request) {
+http::HttpRequestParser::HTTP_CODE
+http::HttpRequestParser::parse_body(char *body, http::HttpRequest &request) {
     request.mContent = body;
     return GET_REQUEST;
 }
 
 // http 请求入口
-parse::HttpRequestParser::HTTP_CODE
-parse::HttpRequestParser::parse_content(char *buffer, int &check_index, int &read_index,
-                                        parse::HttpRequestParser::PARSE_STATE &parse_state, int &start_line,
+http::HttpRequestParser::HTTP_CODE
+http::HttpRequestParser::parse_content(char *buffer, int &check_index, int &read_index,
+                                        http::HttpRequestParser::PARSE_STATE &parse_state, int &start_line,
                                         HttpRequest &request) {
 
     LINE_STATE line_state = LINE_OK;
@@ -159,8 +162,7 @@ parse::HttpRequestParser::parse_content(char *buffer, int &check_index, int &rea
         start_line = check_index;              // 下一行起始位置
 
         switch (parse_state) {
-            case PARSE_REQUESTLINE:
-            {
+            case PARSE_REQUESTLINE: {
                 retcode = parse_requestline(temp, parse_state, request);
                 if (retcode == BAD_REQUEST)
                     return BAD_REQUEST;
@@ -168,8 +170,7 @@ parse::HttpRequestParser::parse_content(char *buffer, int &check_index, int &rea
                 break;
             }
 
-            case PARSE_HEADER:
-            {
+            case PARSE_HEADER: {
                 retcode = parse_headers(temp, parse_state, request);
                 if (retcode == BAD_REQUEST) {
                     return BAD_REQUEST;
@@ -179,8 +180,7 @@ parse::HttpRequestParser::parse_content(char *buffer, int &check_index, int &rea
                 break;
             }
 
-            case PARSE_BODY:
-            {
+            case PARSE_BODY: {
                 retcode = parse_body(temp, request);
 
                 if (retcode == GET_REQUEST) {
@@ -197,6 +197,18 @@ parse::HttpRequestParser::parse_content(char *buffer, int &check_index, int &rea
     } else {
         return BAD_REQUEST;
     }
+}
+// HttpRequest <<
+
+std::ostream &http::operator<<(std::ostream &os, const http::HttpRequest &request) {
+    os << "method:" << request.mMethod << std::endl;
+    os << "uri:" << request.mUri << std::endl;
+    os << "version:" << request.mVersion << std::endl;
+    //os << "content:" << request.mContent << std::endl;
+    for (auto it = request.mHeaders.begin(); it != request.mHeaders.end(); it++) {
+        os << it->first << ":" << it->second << std::endl;
+    }
+    return os;
 }
 
 
