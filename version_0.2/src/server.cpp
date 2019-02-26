@@ -5,6 +5,7 @@
 #include "../include/server.h"
 #include "../include/httpparse.h"
 #include "../include/httpresponse.h"
+#include "../include/ThreadPool.h"
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -13,6 +14,7 @@
 #include <sys/mman.h>
 #include <iostream>
 #include <string>
+#include <functional>
 
 using namespace server;
 using namespace nsocket;
@@ -21,16 +23,21 @@ using namespace http;
 const char *basePath = "/Users/lichunlin/CLionProjects/webserver/";
 
 void HttpServer::run() {
-
+    thread::ThreadPool threadPool(4, 1000);
     while (true) {
-        ClientSocket clientSocket;
-        serverSocket.accept(clientSocket);
-        do_request(clientSocket);
+
+        ClientSocket *clientSocket = new ClientSocket;
+        serverSocket.accept(*clientSocket);
+        thread::ThreadTask *threadTask = new thread::ThreadTask;
+        threadTask->process = std::bind(&HttpServer::do_request, this, std::placeholders::_1);
+        threadTask->arg = static_cast<void*>(clientSocket);
+        threadPool.append(threadTask);
     }
 }
 
 
-void HttpServer::do_request(const ClientSocket & clientSocket) {
+void HttpServer::do_request(void *arg) {
+    ClientSocket clientSocket = *static_cast<ClientSocket*>(arg);
 
     char buffer[BUFFERSIZE];
 
@@ -45,7 +52,7 @@ void HttpServer::do_request(const ClientSocket & clientSocket) {
         recv_data = recv(clientSocket.fd, buffer + read_index, BUFFERSIZE - read_index, 0);
         if (recv_data == -1) {
             std::cout << "reading faild" << std::endl;
-            exit(0);
+            return;
         }
         if (recv_data == 0) {
             std::cout << "connection closed by peer" << std::endl;

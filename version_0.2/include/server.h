@@ -24,10 +24,10 @@ namespace server {
 
 
         void run();
-
+        void do_request(void *args);
 
     private:
-        void do_request(const nsocket::ClientSocket&);
+
         void header(const http::HttpRequest&, http::HttpResponse&);
         void static_file(http::HttpResponse&, const char*);
         void send(const http::HttpResponse&, const nsocket::ClientSocket&);
