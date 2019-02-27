@@ -3,7 +3,8 @@
 //
 
 #include "../include/Socket.h"
-
+#include <cstring>
+#include <cstdio>
 
 void setReusePort(int fd) {
     int opt = 1;
