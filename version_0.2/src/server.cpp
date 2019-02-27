@@ -4,7 +4,7 @@
 
 #include "../include/server.h"
 #include "../include/httpparse.h"
-#include "../include/httpresponse.h"
+#include "../include/HttpResponse.h"
 #include "../include/ThreadPool.h"
 
 #include <unistd.h>
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <string>
 #include <functional>
+
 
 using namespace server;
 using namespace nsocket;
@@ -66,6 +67,7 @@ void HttpServer::do_request(void *arg) {
         if (retcode == http::HttpRequestParser::NO_REQUEST) {
             continue;
         }
+        std::cout << request << std::endl;
 
         if (retcode == http::HttpRequestParser::GET_REQUEST) {
             HttpResponse response(true);

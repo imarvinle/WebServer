@@ -5,9 +5,10 @@
 #ifndef WEBSERVER_SERVER_H
 #define WEBSERVER_SERVER_H
 
-#include "ssocket.h"
-#include "httpparse.h"
+#include "Socket.h"
+#include "HttpParse.h"
 #include "HttpResponse.h"
+#include "HttpData.h"
 
 
 #define BUFFERSIZE 1024
@@ -24,14 +25,14 @@ namespace server {
 
 
         void run();
-        void do_request(void *args);
+        void  do_request(std::shared_ptr<void> arg);
 
     private:
 
-        void header(const http::HttpRequest&, http::HttpResponse&);
-        void static_file(http::HttpResponse&, const char*);
-        void send(const http::HttpResponse&, const nsocket::ClientSocket&);
-        void getMime(const http::HttpRequest&, http::HttpResponse&);
+        void header(std::shared_ptr<http::HttpData>);
+        void static_file(std::shared_ptr<http::HttpData>, const char*);
+        void send(std::shared_ptr<http::HttpData>);
+        void getMime(std::shared_ptr<http::HttpData>);
 
         nsocket::ServerSocket serverSocket;
 

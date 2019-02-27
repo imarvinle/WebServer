@@ -2,9 +2,13 @@
 // Created by marvinle on 2019/2/1 12:18 PM.
 //
 
-#include "../include/utils.h"
+#include "../include/Util.h"
 
 #include <string>
+#include <fcntl.h>
+
+using namespace util;
+
 
 std::string& util::ltrim(std::string &str) {
     if (str.empty()) {
@@ -32,5 +36,14 @@ std::string& util::trim(std::string& str) {
     util::rtrim(str);
     return str;
 }
+
+int setnonblocking(int fd) {
+    int old_option = fcntl(fd, F_GETFL);
+    int new_option = old_option | O_NONBLOCK;
+    fcntl(fd, F_SETFL, new_option);
+    return old_option;
+}
+
+
 
 

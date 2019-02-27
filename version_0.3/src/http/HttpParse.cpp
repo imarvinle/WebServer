@@ -2,8 +2,9 @@
 // Created by marvinle on 2019/2/1 10:59 AM.
 //
 
-#include "../include/httpparse.h"
-#include "../include/Util.h"
+#include "../../include/HttpRequest.h"
+#include "../../include/HttpParse.h"
+#include "../../include/Util.h"
 
 #include <cstring>
 #include <iostream>
@@ -129,9 +130,9 @@ HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, HttpReque
     std::string key_s(key);
     std::transform(key_s.begin(), key_s.end(), key_s.begin(), ::toupper);
     std::string value_s(value);
-    if (key_s == std::string("UPGRADE-INSECURE-REQUESTS")) {
-        return NO_REQUEST;
-    }
+//    if (key_s == std::string("UPGRADE-INSECURE-REQUESTS")) {
+//        return NO_REQUEST;
+//    }
 
     if ((it = HttpRequest::header_map.find(util::trim(key_s))) != (HttpRequest::header_map.end())) {
         request.mHeaders.insert(std::make_pair(it->second, util::trim(value_s)));
@@ -152,8 +153,8 @@ HttpRequestParser::parse_body(char *body, http::HttpRequest &request) {
 // http 请求入口
 HttpRequestParser::HTTP_CODE
 HttpRequestParser::parse_content(char *buffer, int &check_index, int &read_index,
-                                        http::HttpRequestParser::PARSE_STATE &parse_state, int &start_line,
-                                        HttpRequest &request) {
+                                 HttpRequestParser::PARSE_STATE &parse_state, int &start_line,
+                                 HttpRequest &request) {
 
     LINE_STATE line_state = LINE_OK;
     HTTP_CODE retcode = NO_REQUEST;
@@ -198,18 +199,6 @@ HttpRequestParser::parse_content(char *buffer, int &check_index, int &read_index
     }
 }
 
-
-// 重载HttpRequest <<
-std::ostream &http::operator<<(std::ostream &os, const HttpRequest &request) {
-    os << "method:" << request.mMethod << std::endl;
-    os << "uri:" << request.mUri << std::endl;
-    os << "version:" << request.mVersion << std::endl;
-    //os << "content:" << request.mContent << std::endl;
-    for (auto it = request.mHeaders.begin(); it != request.mHeaders.end(); it++) {
-        os << it->first << ":" << it->second << std::endl;
-    }
-    return os;
-}
 
 
 
