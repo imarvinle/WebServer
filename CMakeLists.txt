@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.5)
 project(webserver)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -17,6 +17,17 @@ set(CMAKE_CXX_STANDARD 11)
 #        version_0.2/src/Util.cpp
 #        )
 #
+
+set(CXX_FLAGS
+        -g
+        -Wall
+        -std=c++11
+        -D_PTHREADS
+        -Wno-unused-parameter
+        )
+set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0")
+
 set(SOURCE_FILES
         version_0.3/src/http/HttpRequest.cpp
         version_0.3/src/http/HttpData.cpp
