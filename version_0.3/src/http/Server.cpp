@@ -20,6 +20,7 @@
 #include <functional>
 #include <sys/epoll.h>
 #include <vector>
+#include <cstring>
 
 
 
