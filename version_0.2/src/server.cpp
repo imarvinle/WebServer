@@ -21,7 +21,7 @@ using namespace server;
 using namespace nsocket;
 using namespace http;
 
-const char *basePath = "/Users/lichunlin/CLionProjects/webserver/";
+extern char basePath[300];
 
 void HttpServer::run() {
     thread::ThreadPool threadPool(4, 1000);
@@ -73,7 +73,7 @@ void HttpServer::do_request(void *arg) {
             HttpResponse response(true);
             header(request, response);
             getMime(request, response);
-            static_file(response, "/Users/lichunlin/CLionProjects/webserver/version_0.1");
+            static_file(response, basePath);
             send(response, clientSocket);
         } else {
             std::cout << "Bad Request" << std::endl;

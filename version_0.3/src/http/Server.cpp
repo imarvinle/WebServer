@@ -24,7 +24,8 @@
 
 
 
-const char *basePath = "/Users/lichunlin/CLionProjects/webserver/";
+extern char basePath[300];
+
 
 void HttpServer::run() {
     ThreadPool threadPool(4, 1000);

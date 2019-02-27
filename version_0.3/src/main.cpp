@@ -9,20 +9,22 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <cstring>
+
+char basePath[300] = "/Users/lichunlin/CLionProjects/webserver/";
+
 
 int main(int argc, const char *argv[]) {
-    char *buffer;
-    //也可以将buffer作为输出参数
-    if((buffer = getcwd(NULL, 0)) == NULL)
+    if(getcwd(basePath, 300) == NULL)
     {
         perror("getcwd error");
     }
     else
     {
-        printf("%s\n", buffer);
-        free(buffer);
+        printf("%s\n", basePath);
+        strcat(basePath, "/version_0.3");
     }
 
-    HttpServer httpServer(80);
+    HttpServer httpServer(8080);
     httpServer.run();
 }
