@@ -26,7 +26,7 @@ set(CXX_FLAGS
         -Wno-unused-parameter
         )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lpthread")
+link_libraries(pthread)
 
 
 set(CMAKE_CXX_COMPILER "g++")
