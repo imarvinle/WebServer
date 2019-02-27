@@ -10,6 +10,8 @@
 #include "HttpParse.h"
 #include "HttpResponse.h"
 #include "HttpData.h"
+#include <memory>
+
 
 
 #define BUFFERSIZE 1024

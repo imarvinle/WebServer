@@ -10,6 +10,8 @@
 #include "HttpResponse.h"
 #include "Socket.h"
 #include "Timer.h"
+#include <memory>
+
 
 class TimerNode;
 

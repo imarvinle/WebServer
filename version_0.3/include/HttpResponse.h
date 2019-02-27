@@ -10,6 +10,8 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
+
 
 
 struct MimeType {

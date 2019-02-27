@@ -11,6 +11,8 @@
 #include <list>
 #include <functional>
 #include <pthread.h>
+#include <memory>
+
 
 #include "noncopyable.h"
 #include "MutexLock.h"

@@ -11,6 +11,8 @@
 
 #include <queue>
 #include <deque>
+#include <memory>
+
 
 
 class HttpData;
