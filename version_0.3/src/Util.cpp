@@ -7,10 +7,9 @@
 #include <string>
 #include <fcntl.h>
 
-using namespace util;
 
 
-std::string& util::ltrim(std::string &str) {
+std::string& ltrim(std::string &str) {
     if (str.empty()) {
         return str;
     }
@@ -19,7 +18,7 @@ std::string& util::ltrim(std::string &str) {
     return str;
 }
 
-std::string& util::rtrim(std::string &str) {
+std::string& rtrim(std::string &str) {
     if (str.empty()) {
         return str;
     }
@@ -27,13 +26,13 @@ std::string& util::rtrim(std::string &str) {
     return str;
 }
 
-std::string& util::trim(std::string& str) {
+std::string& trim(std::string& str) {
     if (str.empty()) {
         return str;
     }
 
-    util::ltrim(str);
-    util::rtrim(str);
+    ltrim(str);
+    rtrim(str);
     return str;
 }
 

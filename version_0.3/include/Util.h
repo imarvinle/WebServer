@@ -2,18 +2,22 @@
 // Created by marvinle on 2019/2/1 12:07 PM.
 //
 
-#ifndef WEBSERVER_UTILS_H
-#define WEBSERVER_UTILS_H
+//#ifndef WEBSERVER_UTILS_H
+//#define WEBSERVER_UTILS_H
+
+#pragma once
 
 #include <string>
 
-namespace util {
-    using namespace std;
-     std::string& ltrim(string &);
-     std::string& rtrim(string &);
-     std::string& trim(string &);
+using namespace std;
 
-    int setnonblocking(int fd);
-}
+std::string &ltrim(string &);
 
-#endif //WEBSERVER_UTILS_H
+std::string &rtrim(string &);
+
+std::string &trim(string &);
+
+int setnonblocking(int fd);
+
+
+//#endif //WEBSERVER_UTILS_H

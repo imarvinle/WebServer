@@ -6,7 +6,6 @@
 #include <iostream>
 #include <pthread.h>
 
-using namespace thread;
 
 
 ThreadPool::ThreadPool(int thread_s, int max_queue_s) : max_queue_size(max_queue_s), thread_size(thread_s),

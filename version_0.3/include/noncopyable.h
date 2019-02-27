@@ -2,8 +2,10 @@
 // Created by marvinle on 2019/2/25 3:29 PM.
 //
 
-#ifndef WEBSERVER_NONCOPYABLE_H
-#define WEBSERVER_NONCOPYABLE_H
+#pragma once
+
+//#ifndef WEBSERVER_NONCOPYABLE_H
+//#define WEBSERVER_NONCOPYABLE_H
 
 class noncopyable
 {
@@ -16,4 +18,4 @@ protected:
     ~noncopyable() = default;
 
 };
-#endif //WEBSERVER_NONCOPYABLE_H
+//#endif //WEBSERVER_NONCOPYABLE_H

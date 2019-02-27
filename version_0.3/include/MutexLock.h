@@ -2,8 +2,11 @@
 // Created by marvinle on 2019/2/25 9:00 PM.
 //
 
-#ifndef WEBSERVER_MUTEXLOCK_H
-#define WEBSERVER_MUTEXLOCK_H
+//#ifndef WEBSERVER_MUTEXLOCK_H
+//#define WEBSERVER_MUTEXLOCK_H
+
+#pragma once
+
 #include <pthread.h>
 #include "noncopyable.h"
 
@@ -44,4 +47,4 @@ private:
     MutexLock &mutex_;
 };
 
-#endif //WEBSERVER_MUTEXLOCK_H
+//#endif //WEBSERVER_MUTEXLOCK_H

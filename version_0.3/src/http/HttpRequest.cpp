@@ -3,12 +3,10 @@
 //
 #include "../../include/HttpRequest.h"
 
-using namespace http;
-
 
 
 // 重载HttpRequest <<
-std::ostream &http::operator<<(std::ostream &os, const HttpRequest &request) {
+std::ostream &operator<<(std::ostream &os, const HttpRequest &request) {
     os << "method:" << request.mMethod << std::endl;
     os << "uri:" << request.mUri << std::endl;
     os << "version:" << request.mVersion << std::endl;

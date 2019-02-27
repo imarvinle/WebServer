@@ -8,12 +8,15 @@
 #include "../include/Timer.h"
 
 
-using namespace timer;
 
 size_t TimerNode::current_msec = 0; // 当前时间
 
 const size_t TimerManager::DEFAULT_TIME_OUT = 500; // ms
 
+TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout) : deleted_(false), httpData_(httpData) {
+        current_time();
+        expiredTime_ = current_msec + timeout;
+}
 
 void inline TimerNode::current_time() {
     struct timeval cur;
@@ -29,7 +32,7 @@ void TimerNode::deleted() {
 }
 
 
-void TimerManager::addTimer(std::shared_ptr<http::HttpData> httpData, size_t timeout) {
+void TimerManager::addTimer(std::shared_ptr<HttpData> httpData, size_t timeout) {
     Shared_TimerNode timerNode(new TimerNode(httpData, timeout));
     {
         MutexLockGuard guard(lock_);

@@ -1,8 +1,10 @@
 //
 // Created by marvinle on 2019/2/26 3:19 PM.
 //
-#ifndef WEBSERVER_TIMER_H
-#define WEBSERVER_TIMER_H
+//#ifndef WEBSERVER_TIMER_H
+//#define WEBSERVER_TIMER_H
+
+#pragma once
 
 #include "HttpData.h"
 #include "MutexLock.h"
@@ -10,63 +12,59 @@
 #include <queue>
 #include <deque>
 
-namespace timer {
 
-    class TimerNode {
-    public:
+class HttpData;
 
-        TimerNode(std::shared_ptr<http::HttpData> httpData, size_t timeout) : deleted_(false), httpData_(httpData) {
-            current_time();
-            expiredTime_ = current_msec + timeout;
-        }
+class TimerNode {
+public:
 
-    public:
-        bool isDeleted() const { return deleted_; }
+    TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout);
 
-        size_t getExpireTime() { return expiredTime_; }
+public:
+    bool isDeleted() const { return deleted_; }
 
-        bool isExpire() {
-            current_time();
-            return expiredTime_ < current_msec;
-        }
+    size_t getExpireTime() { return expiredTime_; }
 
-        void deleted();
+    bool isExpire() {
+        current_time();
+        return expiredTime_ < current_msec;
+    }
 
-        std::shared_ptr<http::HttpData> getHttpData() { return httpData_; }
+    void deleted();
 
-        static void current_time();
-        static size_t current_msec; // 当前时间
+    std::shared_ptr<HttpData> getHttpData() { return httpData_; }
 
-    private:
-        bool deleted_;
-        size_t expiredTime_;    // 毫秒
-        std::shared_ptr<http::HttpData> httpData_;
-    };
+    static void current_time();
 
-    struct TimerCmp
-    {
-        bool operator()(std::shared_ptr<TimerNode> &a, std::shared_ptr<TimerNode> &b) const
-        {
-            return a->getExpireTime() > b->getExpireTime();
-        }
-    };
+    static size_t current_msec; // 当前时间
 
-    class TimerManager {
-    public:
-        typedef std::shared_ptr<TimerNode> Shared_TimerNode;
+private:
+    bool deleted_;
+    size_t expiredTime_;    // 毫秒
+    std::shared_ptr<HttpData> httpData_;
+};
 
-    public:
-        void addTimer(std::shared_ptr<http::HttpData> httpData, size_t timeout);
-        void handle_expired_event();
+struct TimerCmp {
+    bool operator()(std::shared_ptr<TimerNode> &a, std::shared_ptr<TimerNode> &b) const {
+        return a->getExpireTime() > b->getExpireTime();
+    }
+};
 
-        const static size_t DEFAULT_TIME_OUT;
+class TimerManager {
+public:
+    typedef std::shared_ptr<TimerNode> Shared_TimerNode;
 
-    private:
-        std::priority_queue<Shared_TimerNode, std::deque<Shared_TimerNode>, TimerCmp> TimerQueue;
-        MutexLock lock_;
-    };
+public:
+    void addTimer(std::shared_ptr<HttpData> httpData, size_t timeout);
+
+    void handle_expired_event();
+
+    const static size_t DEFAULT_TIME_OUT;
+
+private:
+    std::priority_queue<Shared_TimerNode, std::deque<Shared_TimerNode>, TimerCmp> TimerQueue;
+    MutexLock lock_;
+};
 
 
-}
-
-#endif //WEBSERVER_TIMER_H
+//#endif //WEBSERVER_TIMER_H

@@ -23,6 +23,6 @@ int main(int argc, const char *argv[]) {
         free(buffer);
     }
 
-    server::HttpServer httpServer(80);
+    HttpServer httpServer(80);
     httpServer.run();
 }

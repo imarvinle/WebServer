@@ -4,8 +4,6 @@
 
 #include "../../include/HttpData.h"
 
-using namespace http;
-using namespace timer;
 
 
 
@@ -20,7 +18,7 @@ void HttpData::closeTimer() {
     }
 }
 
-void HttpData::setTimer(std::shared_ptr<timer::TimerNode> timer) {
+void HttpData::setTimer(std::shared_ptr<TimerNode> timer) {
     timer_  = timer;
 }
 

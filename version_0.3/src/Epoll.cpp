@@ -8,10 +8,7 @@
 #include <vector>
 #include <sys/epoll.h>
 
-using namespace http;
-using namespace nsocket;
-using namespace util;
-using namespace timer;
+
 
 std::unordered_map<int, std::shared_ptr<HttpData>> Epoll::httpDataMap;
 const int Epoll::MAX_EVENTS = 10000;
@@ -113,7 +110,7 @@ void Epoll::handleConnection(const ServerSocket &serverSocket) {
 
 }
 
-std::vector<std::shared_ptr<http::HttpData>> Epoll::poll(const ServerSocket &serverSocket, int max_event, int timeout) {
+std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSocket, int max_event, int timeout) {
     int event_num = epoll_wait(serverSocket.epoll_fd, events, max_event, timeout);
     if (event_num < 0) {
         std::cout << "epoll_wait error" << std::endl;

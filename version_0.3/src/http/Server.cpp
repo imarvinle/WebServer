@@ -21,19 +21,16 @@
 #include <sys/epoll.h>
 #include <vector>
 
-using namespace server;
-using namespace nsocket;
-using namespace http;
-using namespace util;
+
 
 const char *basePath = "/Users/lichunlin/CLionProjects/webserver/";
 
 void HttpServer::run() {
-    thread::ThreadPool threadPool(4, 1000);
+    ThreadPool threadPool(4, 1000);
     while (true) {
 //        ClientSocket *clientSocket = new ClientSocket;
 //        serverSocket.accept(*clientSocket);
-//        thread::ThreadTask *threadTask = new thread::ThreadTask;
+//        thread::ThreadTask *threadTask = new ThreadTask;
 //        threadTask->process = std::bind(&HttpServer::do_request, this, std::placeholders::_1);
 //        threadTask->arg = static_cast<void*>(clientSocket);
 //        threadPool.append(threadTask);
@@ -82,11 +79,11 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
         HttpRequestParser::HTTP_CODE  retcode = HttpRequestParser::parse_content(
                 buffer, check_index, read_index, parse_state, start_line, *sharedHttpData->request_);
 
-        if (retcode == http::HttpRequestParser::NO_REQUEST) {
+        if (retcode == HttpRequestParser::NO_REQUEST) {
             continue;
         }
 
-        if (retcode == http::HttpRequestParser::GET_REQUEST) {
+        if (retcode == HttpRequestParser::GET_REQUEST) {
             // 检查 keep_alive选项
             auto it = sharedHttpData->request_->mHeaders.find(HttpRequest::Connection);
             if (it != sharedHttpData->request_->mHeaders.end()) {
@@ -130,17 +127,17 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
     if (filepath.rfind('.') != std::string::npos){
         mime = filepath.substr(filepath.rfind('.'));
     }
-    decltype(http::Mime_map)::iterator it;
+    decltype(Mime_map)::iterator it;
 
-    if ((it = http::Mime_map.find(mime)) != http::Mime_map.end()) {
+    if ((it = Mime_map.find(mime)) != Mime_map.end()) {
         httpData->response_->setMime(it->second);
     } else {
-        httpData->response_->setMime(http::Mime_map.find("default")->second);
+        httpData->response_->setMime(Mime_map.find("default")->second);
     }
     httpData->response_->setFilePath(filepath);
 }
 
-void HttpServer::static_file(std::shared_ptr<http::HttpData> httpData, const char *basepath) {
+void HttpServer::static_file(std::shared_ptr<HttpData> httpData, const char *basepath) {
     struct stat file_stat;
     char file[strlen(basepath) + strlen(httpData->response_->filePath().c_str())+1];
     strcpy(file, basepath);
@@ -183,7 +180,7 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData) {
     if (filefd < 0) {
         sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
         sprintf(header, "%s%s", header, internal_error);
-        ::send(clientSocket.fd, header, strlen(header), 0);
+        ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
         return;
     }
 

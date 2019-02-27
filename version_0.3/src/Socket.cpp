@@ -4,14 +4,13 @@
 
 #include "../include/Socket.h"
 
-using namespace nsocket;
 
-void nsocket::setReusePort(int fd) {
+void setReusePort(int fd) {
     int opt = 1;
     setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&opt, sizeof(opt));
 }
 
-nsocket::ServerSocket::ServerSocket(int port, const char *ip) : mPort(port), mIp(ip) {
+ServerSocket::ServerSocket(int port, const char *ip) : mPort(port), mIp(ip) {
     bzero(&mAddr, sizeof(mAddr));
     mAddr.sin_family = AF_INET;
     mAddr.sin_port = htons(port);
@@ -28,7 +27,7 @@ nsocket::ServerSocket::ServerSocket(int port, const char *ip) : mPort(port), mIp
     setReusePort(listen_fd);
 }
 
-void nsocket::ServerSocket::bind() {
+void ServerSocket::bind() {
     int ret = ::bind(listen_fd, (struct sockaddr*)&mAddr, sizeof(mAddr));
     if (ret == -1) {
         std::cout << "bind error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
@@ -36,7 +35,7 @@ void nsocket::ServerSocket::bind() {
     }
 }
 
-void nsocket::ServerSocket::listen() {
+void ServerSocket::listen() {
     int ret = ::listen(listen_fd, 5);
     if (ret == -1) {
         std::cout << "listen error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
@@ -44,7 +43,7 @@ void nsocket::ServerSocket::listen() {
     }
 }
 
-int nsocket::ServerSocket::accept(ClientSocket &clientSocket) const {
+int ServerSocket::accept(ClientSocket &clientSocket) const {
     int clientfd = ::accept(listen_fd, (struct sockaddr*)&clientSocket.mAddr, &clientSocket.mLen);
     if (clientfd < 0) {
         std::cout << "accept error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
@@ -61,7 +60,7 @@ void ServerSocket::close() {
         listen_fd = -1;
     }
 }
-nsocket::ServerSocket::~ServerSocket() {
+ServerSocket::~ServerSocket() {
     close();
 }
 
@@ -71,7 +70,7 @@ void ClientSocket::close() {
         fd = -1;
     }
 }
-nsocket::ClientSocket::~ClientSocket() {
+ClientSocket::~ClientSocket() {
     close();
 }
 

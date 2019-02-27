@@ -10,17 +10,16 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace http;
 
-std::unordered_map<std::string, http::HttpRequest::HTTP_HEADER> http::HttpRequest::header_map = {
-        {"HOST",                      http::HttpRequest::Host},
-        {"USER-AGENT",                http::HttpRequest::User_Agent},
-        {"CONNECTION",                http::HttpRequest::Connection},
-        {"ACCEPT-ENCODING",           http::HttpRequest::Accept_Encoding},
-        {"ACCEPT-LANGUAGE",           http::HttpRequest::Accept_Language},
-        {"ACCEPT",                    http::HttpRequest::Accept},
-        {"CACHE-CONTROL",             http::HttpRequest::Cache_Control},
-        {"UPGRADE-INSECURE-REQUESTS", http::HttpRequest::Upgrade_Insecure_Requests}
+std::unordered_map<std::string, HttpRequest::HTTP_HEADER> HttpRequest::header_map = {
+        {"HOST",                      HttpRequest::Host},
+        {"USER-AGENT",                HttpRequest::User_Agent},
+        {"CONNECTION",                HttpRequest::Connection},
+        {"ACCEPT-ENCODING",           HttpRequest::Accept_Encoding},
+        {"ACCEPT-LANGUAGE",           HttpRequest::Accept_Language},
+        {"ACCEPT",                    HttpRequest::Accept},
+        {"CACHE-CONTROL",             HttpRequest::Cache_Control},
+        {"UPGRADE-INSECURE-REQUESTS", HttpRequest::Upgrade_Insecure_Requests}
 };
 
 
@@ -134,8 +133,8 @@ HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, HttpReque
 //        return NO_REQUEST;
 //    }
 
-    if ((it = HttpRequest::header_map.find(util::trim(key_s))) != (HttpRequest::header_map.end())) {
-        request.mHeaders.insert(std::make_pair(it->second, util::trim(value_s)));
+    if ((it = HttpRequest::header_map.find(trim(key_s))) != (HttpRequest::header_map.end())) {
+        request.mHeaders.insert(std::make_pair(it->second, trim(value_s)));
     } else {
         std::cout << "Header no support: " << key << " : " << value << std::endl;
     }
@@ -145,7 +144,7 @@ HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, HttpReque
 
 // 解析body
 HttpRequestParser::HTTP_CODE
-HttpRequestParser::parse_body(char *body, http::HttpRequest &request) {
+HttpRequestParser::parse_body(char *body, HttpRequest &request) {
     request.mContent = body;
     return GET_REQUEST;
 }

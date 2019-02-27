@@ -7,7 +7,7 @@
 
 #include <string>
 
-std::unordered_map<std::string, http::MimeType> http::Mime_map = {
+std::unordered_map<std::string, MimeType> Mime_map = {
         {".html", "text/html"},
         {".xml", "text/xml"},
         {".xhtml", "application/xhtml+xml"},
@@ -30,7 +30,7 @@ std::unordered_map<std::string, http::MimeType> http::Mime_map = {
         {"default","text/plain"}
 };
 
-void http::HttpResponse::appenBuffer(char *buffer) const{
+void HttpResponse::appenBuffer(char *buffer) const{
 
     // 版本
     if (mVersion == HttpRequest::HTTP_11) {
