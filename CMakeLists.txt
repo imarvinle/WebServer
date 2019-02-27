@@ -22,9 +22,13 @@ set(CXX_FLAGS
         -g
         -Wall
         -std=c++11
-        -D_PTHREADS
+        -lpthread
         -Wno-unused-parameter
         )
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lpthread")
+
+
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 

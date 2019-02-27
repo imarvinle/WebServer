@@ -8,7 +8,6 @@
 #include <fcntl.h>
 
 
-
 std::string& ltrim(std::string &str) {
     if (str.empty()) {
         return str;
