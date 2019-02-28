@@ -36,7 +36,7 @@ int Epoll::init(int max_events) {
 
 int Epoll::addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData> httpData) {
     epoll_event event;
-    event.events = events;
+    event.events = (EPOLLIN|EPOLLET);
     event.data.fd = fd;
     httpDataMap[fd] = httpData;
     int ret = ::epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event);
