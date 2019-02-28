@@ -44,8 +44,9 @@ void HttpServer::run() {
         }
         std::shared_ptr<HttpData> httpData(new HttpData());
         httpData->epoll_fd = epoll_fd;
-        Epoll::addfd(epoll_fd, serverSocket.listen_fd, (EPOLLIN | EPOLLET), httpData);
-        std::vector<std::shared_ptr<HttpData>> events = Epoll::poll(serverSocket, 1024, -1);
+        __uint32_t event = (EPOLLIN | EPOLLET);
+        Epoll::addfd(epoll_fd, serverSocket.listen_fd, event, httpData);
+        std::vector<std::shared_ptr<HttpData>> events = Epoll::poll(serverSocket, 1000, -1);
 
         for (auto& req : events) {
             threadPool.append(req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
