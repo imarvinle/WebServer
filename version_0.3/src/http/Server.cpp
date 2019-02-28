@@ -37,6 +37,7 @@ void HttpServer::run() {
 //        threadTask->arg = static_cast<void*>(clientSocket);
 //        threadPool.append(threadTask);
         int epoll_fd = Epoll::init(1024);
+        std::cout << "a|epoll_fd=" << epoll_fd << std::endl;
         int ret = setnonblocking(epoll_fd);
         if (ret < 0) {
             std::cout << "epoll_fd set nonblocking error" << std::endl;
