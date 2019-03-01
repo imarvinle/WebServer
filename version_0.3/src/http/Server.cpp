@@ -129,8 +129,10 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             getMime(sharedHttpData);
             // FIXME 之前测试时写死的了文件路径导致上服务器出错
             //static_file(sharedHttpData, "/Users/lichunlin/CLionProjects/webserver/version_0.1");
-            static_file(sharedHttpData, basePath);
-            send(sharedHttpData);
+            FileState  fileState = static_file(sharedHttpData, basePath);
+            send(sharedHttpData, fileState);
+
+            // TODO 这里需要增加对定时器的操作
 
         } else {
             // todo Bad Request 应该关闭定时器
@@ -173,55 +175,74 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
     httpData->response_->setFilePath(filepath);
 }
 
-void HttpServer::static_file(std::shared_ptr<HttpData> httpData, const char *basepath) {
+HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData, const char *basepath) {
     struct stat file_stat;
     char file[strlen(basepath) + strlen(httpData->response_->filePath().c_str())+1];
     strcpy(file, basepath);
     strcat(file, httpData->response_->filePath().c_str());
 
+    // 文件不存在
     if (stat(file, &file_stat) < 0) {
         httpData->response_->setStatusCode(HttpResponse::k404NotFound);
         httpData->response_->setStatusMsg("Not Found");
-        httpData->response_->setFilePath(std::string(basepath)+"/404.html");
+        // 废弃， 404就不需要设置filepath
+        //httpData->response_->setFilePath(std::string(basepath)+"/404.html");
         std::cout << "File Not Found: " <<   file << std::endl;
-        return;
+        return FIlE_NOT_FOUND;
     }
-
+    // 不是普通文件或无访问权限
     if(!S_ISREG(file_stat.st_mode)){
         httpData->response_->setStatusCode(HttpResponse::k403forbiden);
         httpData->response_->setStatusMsg("ForBidden");
-        httpData->response_->setFilePath(std::string(basepath)+"/403.html");
+        // 废弃， 403就不需要设置filepath
+        //httpData->response_->setFilePath(std::string(basepath)+"/403.html");
         std::cout << "not normal file" << std::endl;
-        return;
+        return FILE_FORBIDDEN;
     }
 
     httpData->response_->setStatusCode(HttpResponse::k200Ok);
     httpData->response_->setStatusMsg("OK");
     httpData->response_->setFilePath(file);
     std::cout << "文件存在 - ok" << std::endl;
-    return;
+    return FILE_OK;
 }
 
-void HttpServer::send(std::shared_ptr<HttpData> httpData) {
+void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
     char header[BUFFERSIZE];
     bzero(header, '\0');
     const char *internal_error = "Internal Error";
     struct stat file_stat;
     httpData->response_->appenBuffer(header);
-    if (stat(httpData->response_->filePath().c_str(), &file_stat) < 0) {
-        std::cout << "获取文件状态失败" << std::endl;
-        sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
-        sprintf(header, "%s%s", header, internal_error);
+    // 404
+    if (fileState == FIlE_NOT_FOUND) {
+
+        // 如果是 '/'开头就发送默认页
+        if (httpData->response_->mFilePath() == std::string("/")) {
+            sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(INDEX_PAGE));
+            sprintf(header, "%s%s", header, INDEX_PAGE);
+        } else {
+            sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(NOT_FOUND_PAGE));
+            sprintf(header, "%s%s", header, NOT_FOUND_PAGE);
+        }
+        ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+        return;
+    }
+
+    if (fileState == FILE_FORBIDDEN) {
+        sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(FORBIDDEN_PAGE));
+        sprintf(header, "%s%s", header, FORBIDDEN_PAGE);
         ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
         return;
     }
 
     int filefd = ::open(httpData->response_->filePath().c_str(), O_RDONLY);
+    // 内部错误
     if (filefd < 0) {
         std::cout << "打开文件失败" << std::endl;
         sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
         sprintf(header, "%s%s", header, internal_error);
         ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+        close(filefd);
         return;
     }
 
