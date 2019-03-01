@@ -212,7 +212,7 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData) {
     }
 
     int filefd = ::open(httpData->response_->filePath().c_str(), O_RDONLY);
-    if (filefd < 0)
+    if (filefd < 0) {
         std::cout << "打开文件失败" << std::endl;
         sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
         sprintf(header, "%s%s", header, internal_error);
