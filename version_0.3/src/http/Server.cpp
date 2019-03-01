@@ -223,6 +223,8 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
 
     // 文件不存在
     if (httpData->response_->filePath() == "/" || stat(file, &file_stat) < 0) {
+        // FIXME 设置Mime 为 html
+        httpData->response_->setMime(MimeType("text/html"));
         httpData->response_->setStatusCode(HttpResponse::k404NotFound);
         httpData->response_->setStatusMsg("Not Found");
         // 废弃， 404就不需要设置filepath
@@ -232,6 +234,8 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
     }
     // 不是普通文件或无访问权限
     if(!S_ISREG(file_stat.st_mode)){
+        // FIXME 设置Mime 为 html
+        httpData->response_->setMime(MimeType("text/html"));
         httpData->response_->setStatusCode(HttpResponse::k403forbiden);
         httpData->response_->setStatusMsg("ForBidden");
         // 废弃， 403就不需要设置filepath
