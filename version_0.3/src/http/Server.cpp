@@ -151,6 +151,8 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
     std::string filepath = httpData->request_->mUri;
     std::string mime;
     int pos;
+    std::cout << "uri: " << filepath << std::endl;
+    // FIXME 直接将参数丢掉了，后续可以开发
     if ((pos = filepath.rfind('?')) != std::string::npos) {
         filepath.erase(filepath.rfind('?'));
     }
