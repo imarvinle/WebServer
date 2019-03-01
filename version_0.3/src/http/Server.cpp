@@ -124,7 +124,9 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             }
             header(sharedHttpData);
             getMime(sharedHttpData);
-            static_file(sharedHttpData, "/Users/lichunlin/CLionProjects/webserver/version_0.1");
+            // FIXME 之前测试时写死的了文件路径导致上服务器出错
+            //static_file(sharedHttpData, "/Users/lichunlin/CLionProjects/webserver/version_0.1");
+            static_file(sharedHttpData, basePath);
             send(sharedHttpData);
 
         } else {
@@ -176,6 +178,7 @@ void HttpServer::static_file(std::shared_ptr<HttpData> httpData, const char *bas
         httpData->response_->setStatusCode(HttpResponse::k404NotFound);
         httpData->response_->setStatusMsg("Not Found");
         httpData->response_->setFilePath(std::string(basepath)+"/404.html");
+        std::cout << "File Not Found: " <<   file << std::endl;
         return;
     }
 
