@@ -3,6 +3,7 @@
 //
 
 #include "../include/Socket.h"
+#include "../include/Util.h"
 #include <cstring>
 #include <cstdio>
 
@@ -26,6 +27,7 @@ ServerSocket::ServerSocket(int port, const char *ip) : mPort(port), mIp(ip) {
         exit(0);
     }
     setReusePort(listen_fd);
+
 }
 
 void ServerSocket::bind() {

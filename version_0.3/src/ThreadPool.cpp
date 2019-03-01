@@ -52,9 +52,12 @@ bool ThreadPool::append(std::shared_ptr<void> arg, std::function<void(std::share
     threadTask.process = fun;
 
     request_queue.push_back(threadTask);
-    if (request_queue.size() == 1) {
-        condition_.notify();
-    }
+//    if (request_queue.size() == 1) {
+//        condition_.notify();
+//    }
+    // 之前是先判断当前队列是否为空，为空才有线程等待在上面，才需要signal
+    // 而后发现其实直接signal也没事，因为signal信号就算没有等待在信号上的也没事
+    condition_.notify();
     return true;
 }
 
