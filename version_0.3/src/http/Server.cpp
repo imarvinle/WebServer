@@ -29,48 +29,49 @@ extern char basePath[300];
 
 void HttpServer::run() {
     ThreadPool threadPool(4, 1000);
-    while (true) {
-//        ClientSocket *clientSocket = new ClientSocket;
+
+    //        ClientSocket *clientSocket = new ClientSocket;
 //        serverSocket.accept(*clientSocket);
 //        thread::ThreadTask *threadTask = new ThreadTask;
 //        threadTask->process = std::bind(&HttpServer::do_request, this, std::placeholders::_1);
 //        threadTask->arg = static_cast<void*>(clientSocket);
 //        threadPool.append(threadTask);
-        int epoll_fd = Epoll::init(1024);
-        std::cout << "a|epoll_fd=" << epoll_fd << std::endl;
+    int epoll_fd = Epoll::init(1024);
+    std::cout << "a|epoll_fd=" << epoll_fd << std::endl;
 //        int ret = setnonblocking(epoll_fd);
 //        if (ret < 0) {
 //            std::cout << "epoll_fd set nonblocking error" << std::endl;
 //        }
-        std::shared_ptr<HttpData> httpData(new HttpData());
-        httpData->epoll_fd = epoll_fd;
-        __uint32_t event = (EPOLLIN | EPOLLET);
+    std::shared_ptr<HttpData> httpData(new HttpData());
+    httpData->epoll_fd = epoll_fd;
+    serverSocket.epoll_fd = epoll_fd;   // 之前就是这里忘了添加,导致穿进去的serverSocket具有不正确的epoll_fd
 
-        // test begin
+    __uint32_t event = (EPOLLIN | EPOLLET);
+    Epoll::addfd(epoll_fd, serverSocket.listen_fd, event, httpData);
 
-        epoll_event eventss;
-        epoll_event events[1024];
-        eventss.data.fd = serverSocket.listen_fd;
-        eventss.events = EPOLLIN | EPOLLET;
+    while (true) {
 
-        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, serverSocket.listen_fd, &eventss);
-        int ret = epoll_wait(epoll_fd, events, 1024, -1);
-        if (ret > 0) {
-            std::cout << "ret =" << ret << std::endl;
-        } else {
-            std::cout << "ret =" << ret << std::endl;
-        }
+
+//        epoll_event eventss;
+//        epoll_event events[1024];
+//        eventss.data.fd = serverSocket.listen_fd;
+//        eventss.events = EPOLLIN | EPOLLET;
+//
+//        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, serverSocket.listen_fd, &eventss);
+//        int ret = epoll_wait(epoll_fd, events, 1024, -1);
+//        if (ret > 0) {
+//            std::cout << "ret =" << ret << std::endl;
+//        } else {
+//            std::cout << "ret =" << ret << std::endl;
+//        }
 
         //test end
 
+        std::vector<std::shared_ptr<HttpData>> events = Epoll::poll(serverSocket, 1024, -1);
 
-//        Epoll::addfd(epoll_fd, serverSocket.listen_fd, event, httpData);
-//
-//        std::vector<std::shared_ptr<HttpData>> events = Epoll::poll(serverSocket, 1000, -1);
-//
-//        for (auto& req : events) {
-//            threadPool.append(req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
-//        }
+        for (auto& req : events) {
+            threadPool.append(req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
+        }
     }
 }
 

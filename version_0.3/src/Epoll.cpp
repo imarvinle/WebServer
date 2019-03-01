@@ -117,6 +117,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
     if (event_num < 0) {
         std::cout << "epoll_num=" << event_num << std::endl;
         std::cout << "epoll_wait error" << std::endl;
+        std::cout << errno << std::endl;
         exit(-1);
     }
 
