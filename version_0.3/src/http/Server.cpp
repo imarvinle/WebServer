@@ -186,12 +186,14 @@ void HttpServer::static_file(std::shared_ptr<HttpData> httpData, const char *bas
         httpData->response_->setStatusCode(HttpResponse::k403forbiden);
         httpData->response_->setStatusMsg("ForBidden");
         httpData->response_->setFilePath(std::string(basepath)+"/403.html");
+        std::cout << "not normal file" << std::endl;
         return;
     }
 
     httpData->response_->setStatusCode(HttpResponse::k200Ok);
     httpData->response_->setStatusMsg("OK");
     httpData->response_->setFilePath(file);
+    std::cout << "文件存在 - ok" << std::endl;
     return;
 }
 
@@ -202,6 +204,7 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData) {
     struct stat file_stat;
     httpData->response_->appenBuffer(header);
     if (stat(httpData->response_->filePath().c_str(), &file_stat) < 0) {
+        std::cout << "获取文件状态失败" << std::endl;
         sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
         sprintf(header, "%s%s", header, internal_error);
         ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
@@ -209,7 +212,8 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData) {
     }
 
     int filefd = ::open(httpData->response_->filePath().c_str(), O_RDONLY);
-    if (filefd < 0) {
+    if (filefd < 0)
+        std::cout << "打开文件失败" << std::endl;
         sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
         sprintf(header, "%s%s", header, internal_error);
         ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
