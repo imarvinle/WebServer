@@ -88,8 +88,12 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
 
     while (true) {
 
+        // FIXME 这里也是同样的，由于是非阻塞IO，所以返回-1 也不一定是错误，还需判断error
         recv_data = recv(sharedHttpData->clientSocket_->fd, buffer + read_index, BUFFERSIZE - read_index, 0);
         if (recv_data == -1) {
+            if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
+                return;  // FIXME 请求不完整该怎么办，继续加定时器吗？还是直接关闭
+            }
             std::cout << "reading faild" << std::endl;
             return;
         }
