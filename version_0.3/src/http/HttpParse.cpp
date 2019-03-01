@@ -118,8 +118,8 @@ HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, HttpReque
         return NO_REQUEST;
     }
 
-    // FIXME  char key[20]曾被缓冲区溢出
-    char key[100], value[100];
+    // FIXME  char key[20]曾被缓冲区溢出, value[100]也被 chrome的user-agent 溢出
+    char key[100], value[300];
 
     // FIXME 需要修改有些value里也包含了':'符号
     sscanf(line, "%[^:]:%[^:]", key, value);
