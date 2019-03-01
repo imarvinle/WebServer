@@ -49,7 +49,7 @@ void HttpServer::run() {
         // test begin
 
         epoll_event eventss;
-        epoll_event events[1024]
+        epoll_event events[1024];
         eventss.data.fd = serverSocket.listen_fd;
         eventss.events = EPOLLIN | EPOLLET;
 
