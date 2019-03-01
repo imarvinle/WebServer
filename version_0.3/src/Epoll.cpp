@@ -84,6 +84,7 @@ void Epoll::handleConnection(const ServerSocket &serverSocket) {
 
     std::shared_ptr<ClientSocket> tempClient(new ClientSocket);
     // epoll 是ET模式，循环接收连接
+    // 需要将listen_fd设置为non-blocking
     while(serverSocket.accept(*tempClient) > 0) {
         int ret = setnonblocking(tempClient->fd);
         if (ret < 0) {
