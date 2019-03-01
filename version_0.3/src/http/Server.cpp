@@ -105,19 +105,22 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
         }
         read_index += recv_data;
 
+
         HttpRequestParser::HTTP_CODE  retcode = HttpRequestParser::parse_content(
                 buffer, check_index, read_index, parse_state, start_line, *sharedHttpData->request_);
 
         if (retcode == HttpRequestParser::NO_REQUEST) {
             continue;
         }
+        std::cout << "完整请求" << std::endl << buffer << std::endl;
 
         if (retcode == HttpRequestParser::GET_REQUEST) {
-            // 检查 keep_alive选项
+            // FIXME 检查 keep_alive选项
             auto it = sharedHttpData->request_->mHeaders.find(HttpRequest::Connection);
             if (it != sharedHttpData->request_->mHeaders.end()) {
-                if (it->second == "keep_alive") {
+                if (it->second == "keep-alive") {
                     sharedHttpData->response_->setKeepAlive(true);
+                    sharedHttpData->response_->addHeader("Keep-Alive", "timeout=30000");
                 } else {
                     sharedHttpData->response_->setKeepAlive(false);
                 }
