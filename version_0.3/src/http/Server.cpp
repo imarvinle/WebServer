@@ -105,14 +105,14 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
         }
         read_index += recv_data;
 
-
+        std::cout << "完整请求" << std::endl << buffer << std::endl;
         HttpRequestParser::HTTP_CODE  retcode = HttpRequestParser::parse_content(
                 buffer, check_index, read_index, parse_state, start_line, *sharedHttpData->request_);
 
         if (retcode == HttpRequestParser::NO_REQUEST) {
             continue;
         }
-        std::cout << "完整请求" << std::endl << buffer << std::endl;
+
 
         if (retcode == HttpRequestParser::GET_REQUEST) {
             // FIXME 检查 keep_alive选项
