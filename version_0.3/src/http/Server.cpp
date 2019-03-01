@@ -77,7 +77,7 @@ void HttpServer::run() {
 //        threadTask->arg = static_cast<void*>(clientSocket);
 //        threadPool.append(threadTask);
     int epoll_fd = Epoll::init(1024);
-    std::cout << "a|epoll_fd=" << epoll_fd << std::endl;
+    //std::cout << "a|epoll_fd=" << epoll_fd << std::endl;
 //        int ret = setnonblocking(epoll_fd);
 //        if (ret < 0) {
 //            std::cout << "epoll_fd set nonblocking error" << std::endl;
@@ -222,7 +222,7 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
     strcat(file, httpData->response_->filePath().c_str());
 
     // 文件不存在
-    if (stat(file, &file_stat) < 0) {
+    if (httpData->response_->filePath() == "/" || stat(file, &file_stat) < 0) {
         httpData->response_->setStatusCode(HttpResponse::k404NotFound);
         httpData->response_->setStatusMsg("Not Found");
         // 废弃， 404就不需要设置filepath
