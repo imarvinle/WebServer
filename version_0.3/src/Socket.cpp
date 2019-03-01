@@ -27,7 +27,7 @@ ServerSocket::ServerSocket(int port, const char *ip) : mPort(port), mIp(ip) {
         exit(0);
     }
     setReusePort(listen_fd);
-
+    setnonblocking(listen_fd); // FIXME 之前没加，导致循环接受阻塞了
 }
 
 void ServerSocket::bind() {
