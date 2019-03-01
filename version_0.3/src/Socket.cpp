@@ -48,7 +48,14 @@ void ServerSocket::listen() {
 
 int ServerSocket::accept(ClientSocket &clientSocket) const {
     int clientfd = ::accept(listen_fd, (struct sockaddr*)&clientSocket.mAddr, &clientSocket.mLen);
+    // FIXME 由于之前listen_fd是阻塞的逻辑正确，但是对于非阻塞listen_fd不正确
+//    if (clientfd < 0) {
+//        std::cout << "accept error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
+//        exit(0);
+//    }
     if (clientfd < 0) {
+        if ((errno == EWOULDBLOCK) || (errno == EAGAIN))
+            return clientfd;
         std::cout << "accept error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
         exit(0);
     }
