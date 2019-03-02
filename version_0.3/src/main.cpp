@@ -64,8 +64,13 @@ int main(int argc, char **argv) {
             default: break;
         }
     }
-
-
+    //  输出配置信息
+    {
+      printf("配置信息:\n");
+      printf("端口: %d\n", port);
+      printf("线程数: %d\n", threadNumber);
+      printf("根目录: %s\n", basePath.c_str());
+    }
     handle_for_sigpipe();
 
     HttpServer httpServer(port);
