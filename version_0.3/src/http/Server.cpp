@@ -108,10 +108,12 @@ void HttpServer::run() {
         //test end
 
         std::vector<std::shared_ptr<HttpData>> events = Epoll::poll(serverSocket, 1024, -1);
-
+        // FIXME 将事件传递给 线程池
         for (auto& req : events) {
             threadPool.append(req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
         }
+        // 处理定时器超时事件
+        Epoll::timerManager.handle_expired_event();
     }
 }
 
@@ -171,11 +173,15 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             //static_file(sharedHttpData, "/Users/lichunlin/CLionProjects/webserver/version_0.1");
             FileState  fileState = static_file(sharedHttpData, basePath);
             send(sharedHttpData, fileState);
-
+            // 如果是keep_alive else sharedHttpData将会自动析构释放clientSocket，从而关闭资源
+            if (sharedHttpData->response_->keep_alive()) {
+                std::cout << "再次添加定时器,keep_alive: " << sharedHttpData->clientSocket_->fd << std::endl;
+                Epoll::timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
+            }
             // TODO 这里需要增加对定时器的操作
 
         } else {
-            // todo Bad Request 应该关闭定时器
+            // todo Bad Request 应该关闭定时器,(其实定时器已经关闭,在每接到一个新的数据时)
             std::cout << "Bad Request" << std::endl;
         }
     }

@@ -3,6 +3,7 @@
 //
 
 #include "../include/Server.h"
+#include "../include/Util.h"
 
 #include <string>
 #include <iostream>
@@ -24,7 +25,7 @@ int main(int argc, const char *argv[]) {
         printf("%s\n", basePath);
         strcat(basePath, "/version_0.3");
     }
-
+    handle_for_sigpipe();
     HttpServer httpServer(8080);
     httpServer.run();
 }

@@ -16,7 +16,7 @@ const int Epoll::MAX_EVENTS = 10000;
 epoll_event *Epoll::events;
 
 // 可读 | ET模 | 保证一个socket连接在任一时刻只被一个线程处理
-const __uint32_t Epoll::DEFAULT_EVENTS =  EPOLLIN | EPOLLET | EPOLLONESHOT;
+const __uint32_t Epoll::DEFAULT_EVENTS =  (EPOLLIN | EPOLLET | EPOLLONESHOT);
 
 TimerManager Epoll::timerManager;
 
@@ -38,6 +38,7 @@ int Epoll::addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpDa
     epoll_event event;
     event.events = (EPOLLIN|EPOLLET);
     event.data.fd = fd;
+    // 增加httpDataMap
     httpDataMap[fd] = httpData;
     int ret = ::epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event);
     if (ret < 0) {
@@ -53,6 +54,7 @@ int Epoll::modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpDa
     epoll_event event;
     event.events = events;
     event.data.fd = fd;
+    // 每次更改的时候也更新 httpDataMap
     httpDataMap[fd] = httpData;
     int ret = ::epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &event);
     if (ret < 0) {
@@ -93,6 +95,8 @@ void Epoll::handleConnection(const ServerSocket &serverSocket) {
             continue;
         }
 
+        // FIXME 接受新客户端 构造HttpData并添加定时器
+
         // 在这里做限制并发, 暂时未完成
 
         std::shared_ptr<HttpData> sharedHttpData(new HttpData);
@@ -106,7 +110,7 @@ void Epoll::handleConnection(const ServerSocket &serverSocket) {
 
 
         addfd(serverSocket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS, sharedHttpData);
-        // 添加定时器
+        // FIXME 默认超时时间5 秒测试添加定时器
         timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
     }
 

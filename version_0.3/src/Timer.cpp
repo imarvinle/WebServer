@@ -11,7 +11,7 @@
 
 size_t TimerNode::current_msec = 0; // 当前时间
 
-const size_t TimerManager::DEFAULT_TIME_OUT = 500; // ms
+const size_t TimerManager::DEFAULT_TIME_OUT = 5000; // 5s
 
 TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout) : deleted_(false), httpData_(httpData) {
         current_time();

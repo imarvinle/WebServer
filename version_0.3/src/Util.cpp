@@ -6,6 +6,8 @@
 
 #include <string>
 #include <fcntl.h>
+#include <unistd.h>
+#include <signal.h>
 
 
 std::string& ltrim(std::string &str) {
@@ -43,5 +45,14 @@ int setnonblocking(int fd) {
 }
 
 
+void handle_for_sigpipe()
+{
+    struct sigaction sa;
+    memset(&sa, '\0', sizeof(sa));
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = 0;
+    if(sigaction(SIGPIPE, &sa, NULL))
+        return;
+}
 
 

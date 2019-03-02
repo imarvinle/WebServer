@@ -67,6 +67,7 @@ int ServerSocket::accept(ClientSocket &clientSocket) const {
 void ServerSocket::close() {
     if (listen_fd >= 0) {
         ::close(listen_fd);
+        std::cout << "定时器超时关闭, 文件描述符:" << listen_fd << std::endl;
         listen_fd = -1;
     }
 }
