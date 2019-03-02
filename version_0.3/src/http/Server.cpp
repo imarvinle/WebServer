@@ -276,8 +276,8 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
         // 如果是 '/'开头就发送默认页
         if (httpData->response_->filePath() == std::string("/")) {
             // 现在使用测试页面
-            sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(TEST));
-            sprintf(header, "%s%s", header, TEST);
+            sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(INDEX_PAGE));
+            sprintf(header, "%s%s", header, INDEX_PAGE);
         } else {
             sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(NOT_FOUND_PAGE));
             sprintf(header, "%s%s", header, NOT_FOUND_PAGE);
