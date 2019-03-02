@@ -1,5 +1,8 @@
 # A C++ Lightweight Web Server
 
+
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+
 ## 简介
 
 这是一个轻量级的Web服务器，目前支持GET、HEAD方法处理静态资源。并发模型选择: 单进程＋Reactor+非阻塞方式运行。
@@ -18,6 +21,9 @@
 + 集成开发工具: CLion
 
 + 编辑器: Vim
+
++ 压测工具：[WebBench](https://github.com/EZLippi/WebBench)
+
 
   
 
