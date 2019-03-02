@@ -119,6 +119,7 @@ void Epoll::handleConnection(const ServerSocket &serverSocket) {
 }
 
 std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSocket, int max_event, int timeout) {
+    std::cout <<  std::endl << std::endl;
     int event_num = epoll_wait(serverSocket.epoll_fd, events, max_event, timeout);
     if (event_num < 0) {
         std::cout << "epoll_num=" << event_num << std::endl;
