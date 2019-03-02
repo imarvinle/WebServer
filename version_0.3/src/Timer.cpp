@@ -23,7 +23,7 @@ TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout) : delet
 
 TimerNode::~TimerNode() {
     //FIXME 析构关闭资源的时候，要讲httpDataMap中的引用,否则资源无法关闭，后期可改进为httpDataMap存储 weak_ptr<HttpData>
-    auto it = Epoll::httpDataMap.find(fd);
+    auto it = Epoll::httpDataMap.find(httpData_->clientSocket_.fd);
     if (it != Epoll::httpDataMap.end()) {
         Epoll::httpDataMap.erase(it);
     }
