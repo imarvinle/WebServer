@@ -87,7 +87,9 @@ void Epoll::handleConnection(const ServerSocket &serverSocket) {
     std::shared_ptr<ClientSocket> tempClient(new ClientSocket);
     // epoll 是ET模式，循环接收连接
     // 需要将listen_fd设置为non-blocking
+
     while(serverSocket.accept(*tempClient) > 0) {
+        // 设置非阻塞
         int ret = setnonblocking(tempClient->fd);
         if (ret < 0) {
             std::cout << "setnonblocking error" << std::endl;
@@ -125,6 +127,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
         exit(-1);
     }
 
+
     std::vector<std::shared_ptr<HttpData>> httpDatas;
     // 遍历events集合
     for(int i = 0; i < event_num; i++) {
@@ -149,13 +152,14 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
             if (it != httpDataMap.end()) {
                 if ((events[i].events & EPOLLIN) || (events[i].events & EPOLLPRI)) {
                     httpDatas.push_back(it->second);
-                    // 清除定时器
+                    // 清除定时器 HttpData.closeTimer()
                     it->second->closeTimer();
                     // 删除掉当前unorder_map持有的HttpData
                     httpDataMap.erase(it);
                 }
             } else {
                 std::cout << "长连接第二次连接未找到" << std::endl;
+                ::close(fd);
                 continue;
             }
             // 这里有个问题是 TimerNode正常超时释放时
