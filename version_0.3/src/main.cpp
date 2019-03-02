@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
     int port = 7244;        // 默认端口
     char tempPath[256];
     int opt;
-    const char *str = "t:p:r:";
+    const char *str = "t:p:r:d";
     bool daemon = false;
 
     while ((opt = getopt(argc, argv, str))!= -1)
