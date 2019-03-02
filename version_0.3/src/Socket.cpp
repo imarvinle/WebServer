@@ -59,8 +59,8 @@ int ServerSocket::accept(ClientSocket &clientSocket) const {
         std::cout << "accept error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
         exit(0);
     }
+    std::cout << "accept a client： " << clientfd << std::endl;
     clientSocket.fd = clientfd;
-    std::cout << "accept a client" << std::endl;
     return clientfd;
 }
 
