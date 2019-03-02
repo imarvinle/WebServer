@@ -2,12 +2,14 @@
 
 
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/MarvinLe/WebServer.svg?branch=master)](https://travis-ci.org/MarvinLe/WebServer)
+
 
 ## 简介
 
 这是一个轻量级的Web服务器，目前支持GET、HEAD方法处理静态资源。并发模型选择: 单进程＋Reactor+非阻塞方式运行。
 
-
+测试页面: [http://marvinle.cn:8080/](http://marvinle.cn:8080/)
 ## 开发部署环境
 
 + 操作系统: Ubuntu 16.04
