@@ -161,7 +161,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             if (it != sharedHttpData->request_->mHeaders.end()) {
                 if (it->second == "keep-alive") {
                     sharedHttpData->response_->setKeepAlive(true);
-                    sharedHttpData->response_->addHeader("Keep-Alive", "timeout=30000");
+                    sharedHttpData->response_->addHeader("Keep-Alive", std::string());
                 } else {
                     sharedHttpData->response_->setKeepAlive(false);
                 }
@@ -178,7 +178,6 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
                 Epoll::modfd(sharedHttpData->epoll_fd, sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS, sharedHttpData);
                 Epoll::timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
             }
-            // TODO 这里需要增加对定时器的操作
 
         } else {
             // todo Bad Request 应该关闭定时器,(其实定时器已经关闭,在每接到一个新的数据时)

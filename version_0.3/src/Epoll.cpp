@@ -154,7 +154,6 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
                     httpDatas.push_back(it->second);
                     // 清除定时器 HttpData.closeTimer()
                     it->second->closeTimer();
-
                     httpDataMap.erase(it);
                 }
             } else {
