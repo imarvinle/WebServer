@@ -28,6 +28,7 @@ set(CXX_FLAGS
 
 link_libraries(pthread)
 
+set(CMAKE_BUILD_TYPE "Release")
 
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS_DEBUG "-O3")
