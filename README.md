@@ -27,7 +27,15 @@
 + 压测工具：[WebBench](https://github.com/EZLippi/WebBench)
 
 
-  
+
+## Usage
+
+```
+cmake . && make 
+
+./webserver [-p port] [-t thread_numbers]  [-r website_root_path]
+
+```
 
 ## 核心功能及技术
 
