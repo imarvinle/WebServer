@@ -12,7 +12,7 @@
 #include <cstring>
 #include <unistd.h>
 
-std::string basePath = "./";   //默认是程序当前目录
+std::string basePath = ".";   //默认是程序当前目录
 
 
 int main(int argc, char **argv) {
@@ -64,6 +64,7 @@ int main(int argc, char **argv) {
             default: break;
         }
     }
+
 
     handle_for_sigpipe();
 
