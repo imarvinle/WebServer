@@ -154,6 +154,9 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
                     // 删除掉当前unorder_map持有的HttpData
                     httpDataMap.erase(it);
                 }
+            } else {
+                std::cout << "长连接第二次连接未找到" << std::endl;
+                continue;
             }
             // 这里有个问题是 TimerNode正常超时释放时
 

@@ -175,7 +175,8 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             send(sharedHttpData, fileState);
             // 如果是keep_alive else sharedHttpData将会自动析构释放clientSocket，从而关闭资源
             if (sharedHttpData->response_->keep_alive()) {
-                std::cout << "再次添加定时器,keep_alive: " << sharedHttpData->clientSocket_->fd << std::endl;
+                std::cout << "再次添加定时器  keep_alive: " << sharedHttpData->clientSocket_->fd << std::endl;
+                Epoll::modfd(sharedHttpData->epoll_fd, sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS, sharedHttpData);
                 Epoll::timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
             }
             // TODO 这里需要增加对定时器的操作
