@@ -6,10 +6,9 @@
 #include "../../include/HttpParse.h"
 #include "../../include/Util.h"
 
-#include <cstring>
+#include <string.h>
 #include <iostream>
 #include <algorithm>
-#include <string>
 
 
 std::unordered_map<std::string, HttpRequest::HTTP_HEADER> HttpRequest::header_map = {
