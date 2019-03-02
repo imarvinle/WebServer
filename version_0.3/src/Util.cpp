@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <cstring>
+#include <sys/stat.h>
 
 
 std::string& ltrim(std::string &str) {
@@ -54,6 +55,19 @@ void handle_for_sigpipe()
     sa.sa_flags = 0;
     if(sigaction(SIGPIPE, &sa, NULL))
         return;
+}
+
+
+int check_base_path(char *basePath) {
+    struct stat file;
+    if (stat(basePath, &file) == -1) {
+        return -1;
+    }
+    // 不是目录 或者不可访问
+    if (!S_ISDIR(file.st_mode) || access(basePath, R_OK) == -1) {
+        return -1;
+    }
+    return 0;
 }
 
 

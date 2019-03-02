@@ -33,7 +33,7 @@ public:
         serverSocket.listen();
     }
 
-    void run();
+    void run(int, int max_queue_size = 10000);
 
     void do_request(std::shared_ptr<void> arg);
 

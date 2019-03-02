@@ -28,7 +28,7 @@ char NOT_FOUND_PAGE[] = "<html>\n"
                         "<head><title>404 Not Found</title></head>\n"
                         "<body bgcolor=\"white\">\n"
                         "<center><h1>404 Not Found</h1></center>\n"
-                        "<hr><center>LC Server/0.3 (Linux)</center>\n"
+                        "<hr><center>LC WebServer/0.3 (Linux)</center>\n"
                         "</body>\n"
                         "</html>";
 
@@ -64,11 +64,11 @@ char INDEX_PAGE[] = "<!DOCTYPE html>\n"
                     "</body>\n"
                     "</html>";
 
-extern char basePath[300];
+extern std::string basePath;
 
 
-void HttpServer::run() {
-    ThreadPool threadPool(4, 1000);
+void HttpServer::run(int thread_num, int max_queque_size) {
+    ThreadPool threadPool(thread_num, max_queque_size);
 
     //        ClientSocket *clientSocket = new ClientSocket;
 //        serverSocket.accept(*clientSocket);
@@ -170,7 +170,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             getMime(sharedHttpData);
             // FIXME 之前测试时写死的了文件路径导致上服务器出错
             //static_file(sharedHttpData, "/Users/lichunlin/CLionProjects/webserver/version_0.1");
-            FileState  fileState = static_file(sharedHttpData, basePath);
+            FileState  fileState = static_file(sharedHttpData, basePath.c_str());
             send(sharedHttpData, fileState);
             // 如果是keep_alive else sharedHttpData将会自动析构释放clientSocket，从而关闭资源
             if (sharedHttpData->response_->keep_alive()) {
@@ -230,8 +230,13 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
     if (httpData->response_->filePath() == "/" || stat(file, &file_stat) < 0) {
         // FIXME 设置Mime 为 html
         httpData->response_->setMime(MimeType("text/html"));
-        httpData->response_->setStatusCode(HttpResponse::k404NotFound);
-        httpData->response_->setStatusMsg("Not Found");
+        if (httpData->response_->filePath() == "/") {
+            httpData->response_->setStatusCode(HttpResponse::k200Ok);
+            httpData->response_->setStatusMsg("OK");
+        } else {
+            httpData->response_->setStatusCode(HttpResponse::k404NotFound);
+            httpData->response_->setStatusMsg("Not Found");
+        }
         // 废弃， 404就不需要设置filepath
         //httpData->response_->setFilePath(std::string(basepath)+"/404.html");
         //std::cout << "File Not Found: " <<   file << std::endl;
@@ -267,8 +272,6 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
 
         // 如果是 '/'开头就发送默认页
         if (httpData->response_->filePath() == std::string("/")) {
-            httpData->response_->setStatusCode(HttpResponse::k200Ok);
-            httpData->response_->setStatusMsg("OK");
             sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(INDEX_PAGE));
             sprintf(header, "%s%s", header, INDEX_PAGE);
         } else {
