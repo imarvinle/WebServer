@@ -5,7 +5,7 @@
 #include "../include/ThreadPool.h"
 #include <iostream>
 #include <pthread.h>
-#include <sys/proc.h>
+#include <sys/prctl.h>
 
 
 
