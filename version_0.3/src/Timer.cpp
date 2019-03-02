@@ -12,7 +12,7 @@
 
 size_t TimerNode::current_msec = 0; // 当前时间
 
-const size_t TimerManager::DEFAULT_TIME_OUT = 20000; // 20s
+const size_t TimerManager::DEFAULT_TIME_OUT = 20 * 1000; // 20s
 
 
 

@@ -161,7 +161,8 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             if (it != sharedHttpData->request_->mHeaders.end()) {
                 if (it->second == "keep-alive") {
                     sharedHttpData->response_->setKeepAlive(true);
-                    sharedHttpData->response_->addHeader("Keep-Alive", std::string());
+                    // timeout=20s
+                    sharedHttpData->response_->addHeader("Keep-Alive", std::string("timeout=20"));
                 } else {
                     sharedHttpData->response_->setKeepAlive(false);
                 }
