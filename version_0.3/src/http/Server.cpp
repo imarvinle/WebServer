@@ -234,7 +234,7 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
         httpData->response_->setStatusMsg("Not Found");
         // 废弃， 404就不需要设置filepath
         //httpData->response_->setFilePath(std::string(basepath)+"/404.html");
-        std::cout << "File Not Found: " <<   file << std::endl;
+        //std::cout << "File Not Found: " <<   file << std::endl;
         return FIlE_NOT_FOUND;
     }
     // 不是普通文件或无访问权限
