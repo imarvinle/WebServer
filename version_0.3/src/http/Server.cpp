@@ -24,13 +24,13 @@
 
 
 
-char NOT_FOUND_PAGE[] = "\"<html>\\n\"\n"
-                        "\"<head><title>404 Not Found</title></head>\\n\"\n"
-                        "\"<body bgcolor=\"white\">\n"
-                        "\"<center><h1>404 Not Found</h1></center>\\n\"\n"
-                        "\"<hr><center>LC Server/0.3 (Linux)</center>\\n\"\n"
-                        "\"</body>\\n\"\n"
-                        "\"</html>\"";
+char NOT_FOUND_PAGE[] = "<html>\n"
+                        "<head><title>404 Not Found</title></head>\n"
+                        "<body bgcolor=\"white\">\n"
+                        "<center><h1>404 Not Found</h1></center>\n"
+                        "<hr><center>LC Server/0.3 (Linux)</center>\n"
+                        "</body>\n"
+                        "</html>";
 
 char FORBIDDEN_PAGE[] = "<html>\n"
                         "<head><title>403 Forbidden</title></head>\n"
