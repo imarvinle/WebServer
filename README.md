@@ -33,7 +33,7 @@
 ```
 cmake . && make 
 
-./webserver [-p port] [-t thread_numbers]  [-r website_root_path]
+./webserver [-p port] [-t thread_numbers]  [-r website_root_path] [-d daemon_run]
 
 ```
 
