@@ -24,7 +24,6 @@ TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout) : delet
 TimerNode::~TimerNode() {
     //FIXME 析构关闭资源的时候，要讲httpDataMap中的引用,否则资源无法关闭，后期可改进为httpDataMap存储 weak_ptr<HttpData>
     std::cout << "TimerNode析构" << std::endl;
-    Epoll::delfd(httpData_->epoll_fd, httpData_->clientSocket_->fd, Epoll::DEFAULT_EVENTS);
 }
 
 void inline TimerNode::current_time() {
@@ -36,6 +35,7 @@ void inline TimerNode::current_time() {
 
 void TimerNode::deleted() {
     // 删除采用标记删除， 并及时析构HttpData，以关闭描述符
+    // 关闭定时器时应该把 httpDataMap 里的HttpData 一起erase
     httpData_.reset();
     deleted_ = true;
 }

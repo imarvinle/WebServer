@@ -143,7 +143,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
                 if (it != httpDataMap.end()) {
                     // 将HttpData节点和TimerNode的关联分开，这样HttpData会立即析构，在析构函数内关闭文件描述符等资源
                     it->second->closeTimer();
-                    httpDataMap.erase(it);
+                    //httpDataMap.erase(it);
                 }
                 continue;
             }
@@ -154,7 +154,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
                     httpDatas.push_back(it->second);
                     // 清除定时器 HttpData.closeTimer()
                     it->second->closeTimer();
-                    // 删除掉当前unorder_map持有的HttpData
+
                     httpDataMap.erase(it);
                 }
             } else {
