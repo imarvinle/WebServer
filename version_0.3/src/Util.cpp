@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <signal.h>
+#include <cstring>
 
 
 std::string& ltrim(std::string &str) {
