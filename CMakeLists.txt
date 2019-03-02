@@ -24,13 +24,17 @@ set(CXX_FLAGS
         -std=c++11
         -lpthread
         -Wno-unused-parameter
+        -O3
         )
 
 link_libraries(pthread)
 
+set(CMAKE_BUILD_TYPE "Release")
 
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 
 set(SOURCE_FILES
         version_0.3/src/http/HttpRequest.cpp

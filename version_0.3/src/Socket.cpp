@@ -47,7 +47,8 @@ void ServerSocket::listen() {
 }
 
 int ServerSocket::accept(ClientSocket &clientSocket) const {
-    std::cout << "listen_fd" << listen_fd << std::endl;
+    //std::cout << "listen_fd" << listen_fd << std::endl;
+    // FIXME 之前这里出报 Invalid arg
     //int clientfd = ::accept(listen_fd, (struct sockaddr*)&clientSocket.mAddr, &clientSocket.mLen);
     int clientfd = ::accept(listen_fd, NULL, NULL);
 
