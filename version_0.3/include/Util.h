@@ -18,7 +18,7 @@ std::string &rtrim(string &);
 std::string &trim(string &);
 
 int setnonblocking(int fd);
-void handle_for_sigpipe()
+void handle_for_sigpipe();
 
 
 //#endif //WEBSERVER_UTILS_H
