@@ -15,11 +15,11 @@
 std::string basePath = "./";   //默认是程序当前目录
 
 
-int main(int argc, const char *argv[]) {
+int main(int argc, char **argv) {
 
     int threadNumber = 4;   //  默认线程数
     int port = 7244;        // 默认端口
-
+    char tempPath[256];
     int opt;
     const char *str = "t:p:r";
 
@@ -37,13 +37,14 @@ int main(int argc, const char *argv[]) {
                 int ret = check_base_path(optarg);
                 if (ret == -1) {
                     printf("Warning: \"%s\" 不存在或不可访问, 将使用当前目录作为网站根目录\n", optarg);
-                    if(getcwd(basePath, 300) == NULL)
+                    if(getcwd(tempPath, 300) == NULL)
                     {
                         perror("getcwd error");
                         basePath = ".";
                     }
                     else
                     {
+                        basePath = tempPath;
                         printf("website root path =%s\n", basePath.c_str());
                     }
                     break;
