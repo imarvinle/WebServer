@@ -77,6 +77,7 @@ ServerSocket::~ServerSocket() {
 
 void ClientSocket::close() {
     if (fd >= 0) {
+        std::cout << "文件描述符关闭: " << fd <<std::endl;
         ::close(fd);
         fd = -1;
     }
