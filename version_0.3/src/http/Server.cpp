@@ -288,6 +288,13 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
         ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
         return;
     }
+    // 获取文件状态
+     if (stat(httpData->response_->filePath().c_str(), &file_stat) < 0) {
+         sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
+         sprintf(header, "%s%s", header, internal_error);
+         ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+         return;
+     }
 
     int filefd = ::open(httpData->response_->filePath().c_str(), O_RDONLY);
     // 内部错误
