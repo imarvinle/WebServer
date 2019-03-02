@@ -21,14 +21,15 @@ class TimerNode {
 public:
 
     TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout);
-
+    ~TimerNode();
 public:
     bool isDeleted() const { return deleted_; }
 
     size_t getExpireTime() { return expiredTime_; }
 
     bool isExpire() {
-        current_time();
+        // 平凡调用系统调用不好
+        //current_time();
         return expiredTime_ < current_msec;
     }
 
