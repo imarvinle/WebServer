@@ -9,6 +9,7 @@
 #include <cstring>
 #include <iostream>
 #include <algorithm>
+#include <string>
 
 
 std::unordered_map<std::string, HttpRequest::HTTP_HEADER> HttpRequest::header_map = {
