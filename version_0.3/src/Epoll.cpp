@@ -153,7 +153,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSoc
             if (it != httpDataMap.end()) {
                 if ((events[i].events & EPOLLIN) || (events[i].events & EPOLLPRI)) {
                     httpDatas.push_back(it->second);
-                    std::cout << "定时器中找到:" << fd << std::endl;
+                    //std::cout << "定时器中找到:" << fd << std::endl;
                     // 清除定时器 HttpData.closeTimer()
                     it->second->closeTimer();
                     httpDataMap.erase(it);

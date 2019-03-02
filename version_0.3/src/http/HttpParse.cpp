@@ -136,7 +136,7 @@ HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state, HttpReque
     if ((it = HttpRequest::header_map.find(trim(key_s))) != (HttpRequest::header_map.end())) {
         request.mHeaders.insert(std::make_pair(it->second, trim(value_s)));
     } else {
-        std::cout << "Header no support: " << key << " : " << value << std::endl;
+        //std::cout << "Header no support: " << key << " : " << value << std::endl;
     }
 
     return NO_REQUEST;

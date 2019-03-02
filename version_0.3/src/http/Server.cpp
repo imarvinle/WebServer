@@ -174,7 +174,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             send(sharedHttpData, fileState);
             // 如果是keep_alive else sharedHttpData将会自动析构释放clientSocket，从而关闭资源
             if (sharedHttpData->response_->keep_alive()) {
-                std::cout << "再次添加定时器  keep_alive: " << sharedHttpData->clientSocket_->fd << std::endl;
+                //FIXME std::cout << "再次添加定时器  keep_alive: " << sharedHttpData->clientSocket_->fd << std::endl;
                 Epoll::modfd(sharedHttpData->epoll_fd, sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS, sharedHttpData);
                 Epoll::timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
             }
@@ -201,7 +201,7 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
     std::string filepath = httpData->request_->mUri;
     std::string mime;
     int pos;
-    std::cout << "uri: " << filepath << std::endl;
+//    std::cout << "uri: " << filepath << std::endl;
     // FIXME 直接将参数丢掉了，后续可以开发
     if ((pos = filepath.rfind('?')) != std::string::npos) {
         filepath.erase(filepath.rfind('?'));
@@ -257,7 +257,7 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
     httpData->response_->setStatusCode(HttpResponse::k200Ok);
     httpData->response_->setStatusMsg("OK");
     httpData->response_->setFilePath(file);
-    std::cout << "文件存在 - ok" << std::endl;
+//    std::cout << "文件存在 - ok" << std::endl;
     return FILE_OK;
 }
 
