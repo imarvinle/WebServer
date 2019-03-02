@@ -39,7 +39,7 @@ void ServerSocket::bind() {
 }
 
 void ServerSocket::listen() {
-    int ret = ::listen(listen_fd, 5);
+    int ret = ::listen(listen_fd, 1024);
     if (ret == -1) {
         std::cout << "listen error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
         exit(0);
