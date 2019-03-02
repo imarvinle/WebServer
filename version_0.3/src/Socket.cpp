@@ -57,7 +57,9 @@ int ServerSocket::accept(ClientSocket &clientSocket) const {
         if ((errno == EWOULDBLOCK) || (errno == EAGAIN))
             return clientfd;
         std::cout << "accept error in file <" << __FILE__ << "> "<< "at " << __LINE__ << std::endl;
-        exit(0);
+        std::cout << "clientfd:" << clientfd << std::endl;
+        perror("accpet error");
+        //exit(0);
     }
     std::cout << "accept a client： " << clientfd << std::endl;
     clientSocket.fd = clientfd;
