@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     int port = 7244;        // 默认端口
     char tempPath[256];
     int opt;
-    const char *str = "t:p:r";
+    const char *str = "t:p:r:";
 
     while ((opt = getopt(argc, argv, str))!= -1)
     {
@@ -45,7 +45,6 @@ int main(int argc, char **argv) {
                     else
                     {
                         basePath = tempPath;
-                        printf("website root path =%s\n", basePath.c_str());
                     }
                     break;
                 }
@@ -66,10 +65,10 @@ int main(int argc, char **argv) {
     }
     //  输出配置信息
     {
-      printf("配置信息:\n");
-      printf("端口: %d\n", port);
-      printf("线程数: %d\n", threadNumber);
-      printf("根目录: %s\n", basePath.c_str());
+      printf("*******LC WebServer 配置信息*******\n");
+      printf("端口:\t%d\n", port);
+      printf("线程数:\t%d\n", threadNumber);
+      printf("根目录:\t%s\n", basePath.c_str());
     }
     handle_for_sigpipe();
 
