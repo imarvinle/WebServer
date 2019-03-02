@@ -1,0 +1,7 @@
+Mwebbench	webbench.c	/^int main(int argc, char *argv[])$/
+Socket	socket.c	/^int Socket(const char *host, int clientPort)$/
+alarm_handler	webbench.c	/^static void alarm_handler(int signal)$/
+bench	webbench.c	/^static int bench(void)$/
+benchcore	webbench.c	/^void benchcore(const char *host,const int port,con/
+build_request	webbench.c	/^void build_request(const char *url)$/
+usage	webbench.c	/^static void usage(void)$/
