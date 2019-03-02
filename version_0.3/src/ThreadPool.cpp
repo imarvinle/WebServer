@@ -83,7 +83,7 @@ void *ThreadPool::worker(void *args) {
     // 退出线程
     if (pool == nullptr)
         return NULL;
-    prctl(PR_PR_SET_NAME,"EventLoopThread");
+    prctl(PR_SET_NAME,"EventLoopThread");
 
     // 执行线程主方法
     pool->run();
