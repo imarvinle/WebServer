@@ -21,23 +21,23 @@ namespace csguide_webserver {
 class Epoll {
   
 public:
-  static int init(int max_events);
+  static int Init(int max_events);
 
-  static int addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>);
+  static int Addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>);
 
-  static int modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>);
+  static int Modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>);
 
-  static int delfd(int epoll_fd, int fd, __uint32_t events);
+  static int Delfd(int epoll_fd, int fd, __uint32_t events);
 
-  static std::vector<std::shared_ptr<HttpData>> poll(const ServerSocket &serverSocket, int max_event, int timeout);
+  static std::vector<std::shared_ptr<HttpData>> Poll(const ServerSocket &serverSocket, int max_event, int timeout);
 
-  static void handleConnection(const ServerSocket &serverSocket);
+  static void HandleConnection(const ServerSocket &serverSocket);
 
 public:
-  static std::unordered_map<int, std::shared_ptr<HttpData>> httpDataMap;
+  static std::unordered_map<int, std::shared_ptr<HttpData>> http_data_map_;
   static const int MAX_EVENTS;
-  static epoll_event *events;
-  static TimerManager timerManager;
+  static epoll_event *events_;
+  static TimerManager timer_manager_;
   const static __uint32_t DEFAULT_EVENTS;
 };
 }  // namespace csguide_webserver

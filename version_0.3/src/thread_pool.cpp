@@ -27,7 +27,7 @@ ThreadPool::ThreadPool(int thread_s, int max_queue_s)
   for (int i = 0; i < thread_size; i++) {
     // 后期可扩展出单独的Thread类，只需要该类拥有run方法即可
     if (pthread_create(&threads[i], NULL, worker, this) != 0) {
-      std::cout << "ThreadPool init error" << std::endl;
+      std::cout << "ThreadPool Init error" << std::endl;
       throw std::exception();
     }
     started++;

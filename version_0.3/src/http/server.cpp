@@ -82,7 +82,7 @@ void HttpServer::run(int thread_num, int max_queque_size) {
   //        threadTask->process = std::bind(&HttpServer::do_request, this,
   //        std::placeholders::_1); threadTask->arg =
   //        static_cast<void*>(clientSocket); threadPool.append(threadTask);
-  int epoll_fd = Epoll::init(1024);
+  int epoll_fd = Epoll::Init(1024);
   // std::cout << "a|epoll_fd=" << epoll_fd << std::endl;
   //        int ret = setnonblocking(epoll_fd);
   //        if (ret < 0) {
@@ -93,7 +93,7 @@ void HttpServer::run(int thread_num, int max_queque_size) {
   serverSocket.epoll_fd = epoll_fd;  // 之前就是这里忘了添加,导致穿进去的serverSocket具有不正确的epoll_fd
 
   __uint32_t event = (EPOLLIN | EPOLLET);
-  Epoll::addfd(epoll_fd, serverSocket.listen_fd, event, httpData);
+    Epoll::Addfd(epoll_fd, serverSocket.listen_fd, event, httpData);
 
   while (true) {
     //        epoll_event eventss;
@@ -111,13 +111,13 @@ void HttpServer::run(int thread_num, int max_queque_size) {
 
     // test end
 
-    std::vector<std::shared_ptr<HttpData>> events = Epoll::poll(serverSocket, 1024, -1);
+    std::vector<std::shared_ptr<HttpData>> events = Epoll::Poll(serverSocket, 1024, -1);
     // FIXME 将事件传递给 线程池
     for (auto& req : events) {
       threadPool.append(req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
     }
     // 处理定时器超时事件
-    Epoll::timerManager.handle_expired_event();
+    Epoll::timer_manager_.handle_expired_event();
   }
 }
 
@@ -181,9 +181,9 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
       if (sharedHttpData->response_->keep_alive()) {
         // FIXME std::cout << "再次添加定时器  keep_alive: " <<
         // sharedHttpData->clientSocket_->fd << std::endl;
-        Epoll::modfd(sharedHttpData->epoll_fd, sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS,
-                     sharedHttpData);
-        Epoll::timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
+          Epoll::Modfd(sharedHttpData->epoll_fd, sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS,
+                       sharedHttpData);
+        Epoll::timer_manager_.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
       }
 
     } else {
