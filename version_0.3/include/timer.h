@@ -17,11 +17,11 @@ namespace csguide_webserver {
 class HttpData;
 
 class TimerNode {
-  public:
+public:
   TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout);
   ~TimerNode();
 
-  public:
+public:
   bool isDeleted() const { return deleted_; }
 
   size_t getExpireTime() { return expiredTime_; }
@@ -40,33 +40,31 @@ class TimerNode {
 
   static size_t current_msec;  // 当前时间
 
-  private:
+private:
   bool deleted_;
   size_t expiredTime_;  // 毫秒
   std::shared_ptr<HttpData> httpData_;
 };
 
 struct TimerCmp {
-  bool operator()(std::shared_ptr<TimerNode> &a,
-                  std::shared_ptr<TimerNode> &b) const {
+  bool operator()(std::shared_ptr<TimerNode> &a, std::shared_ptr<TimerNode> &b) const {
     return a->getExpireTime() > b->getExpireTime();
   }
 };
 
 class TimerManager {
-  public:
+public:
   typedef std::shared_ptr<TimerNode> Shared_TimerNode;
 
-  public:
+public:
   void addTimer(std::shared_ptr<HttpData> httpData, size_t timeout);
 
   void handle_expired_event();
 
   const static size_t DEFAULT_TIME_OUT;
 
-  private:
-  std::priority_queue<Shared_TimerNode, std::deque<Shared_TimerNode>, TimerCmp>
-      TimerQueue;
+private:
+  std::priority_queue<Shared_TimerNode, std::deque<Shared_TimerNode>, TimerCmp> TimerQueue;
   MutexLock lock_;
 };
 

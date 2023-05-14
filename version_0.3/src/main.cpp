@@ -3,10 +3,11 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
-#include <dirent.h>
-#include <fcntl.h>
 #include <signal.h>  //for signal
 #include <stdio.h>
+
+#include <dirent.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>

@@ -20,7 +20,7 @@ class ClientSocket;
 void setReusePort(int fd);
 
 class ServerSocket {
-  public:
+public:
   ServerSocket(int port = 8080, const char *ip = nullptr);
 
   ~ServerSocket();
@@ -33,7 +33,7 @@ class ServerSocket {
 
   int accept(ClientSocket &) const;
 
-  public:
+public:
   sockaddr_in mAddr;
   int listen_fd;
   int epoll_fd;
@@ -42,7 +42,7 @@ class ServerSocket {
 };
 
 class ClientSocket {
-  public:
+public:
   ClientSocket() { fd = -1; };
 
   void close();

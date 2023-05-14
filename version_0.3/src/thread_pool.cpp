@@ -3,21 +3,17 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
+#include "../include/thread_pool.h"
+
 #include <pthread.h>
 #include <sys/prctl.h>
 
 #include <iostream>
 
-#include "../include/thread_pool.h"
-
 namespace csguide_webserver {
 
 ThreadPool::ThreadPool(int thread_s, int max_queue_s)
-    : max_queue_size(max_queue_s),
-      thread_size(thread_s),
-      condition_(mutex_),
-      started(0),
-      shutdown_(0) {
+    : max_queue_size(max_queue_s), thread_size(thread_s), condition_(mutex_), started(0), shutdown_(0) {
   if (thread_s <= 0 || thread_s > MAX_THREAD_SIZE) {
     thread_size = 4;
   }
@@ -40,8 +36,7 @@ ThreadPool::ThreadPool(int thread_s, int max_queue_s)
 
 ThreadPool::~ThreadPool() {}
 
-bool ThreadPool::append(std::shared_ptr<void> arg,
-                        std::function<void(std::shared_ptr<void>)> fun) {
+bool ThreadPool::append(std::shared_ptr<void> arg, std::function<void(std::shared_ptr<void>)> fun) {
   if (shutdown_) {
     std::cout << "ThreadPool has shutdown" << std::endl;
     return false;
@@ -104,8 +99,7 @@ void ThreadPool::run() {
         condition_.wait();
       }
 
-      if ((shutdown_ == immediate_mode) ||
-          (shutdown_ == graceful_mode && request_queue.empty())) {
+      if ((shutdown_ == immediate_mode) || (shutdown_ == graceful_mode && request_queue.empty())) {
         break;
       }
       // FIFO

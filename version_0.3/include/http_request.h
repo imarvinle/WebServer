@@ -39,15 +39,13 @@ struct HttpRequest {
 
   static std::unordered_map<std::string, HTTP_HEADER> header_map;
 
-  HttpRequest(std::string url = std::string(""),
-              HTTP_METHOD method = METHOD_NOT_SUPPORT,
+  HttpRequest(std::string url = std::string(""), HTTP_METHOD method = METHOD_NOT_SUPPORT,
               HTTP_VERSION version = VERSION_NOT_SUPPORT)
       : mMethod(method),
         mVersion(version),
         mUri(url),
         mContent(nullptr),
-        mHeaders(
-            std::unordered_map<HTTP_HEADER, std::string, EnumClassHash>()){};
+        mHeaders(std::unordered_map<HTTP_HEADER, std::string, EnumClassHash>()){};
 
   HTTP_METHOD mMethod;
   HTTP_VERSION mVersion;

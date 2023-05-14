@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 #ifndef WEBSERVER_HTTPRESPONSE_H
 #define WEBSERVER_HTTPRESPONSE_H
@@ -24,13 +24,8 @@ struct MimeType {
 extern std::unordered_map<std::string, http::MimeType> Mime_map;
 
 class HttpResponse {
-  public:
-  enum HttpStatusCode {
-    Unknow,
-    k200Ok = 200,
-    k403forbiden = 403,
-    k404NotFound = 404
-  };
+public:
+  enum HttpStatusCode { Unknow, k200Ok = 200, k403forbiden = 403, k404NotFound = 404 };
 
   explicit HttpResponse(bool close)
       : mStatusCode(Unknow),
@@ -42,17 +37,13 @@ class HttpResponse {
   void setStatusCode(HttpStatusCode code) { mStatusCode = code; }
   void setBody(const char *buf) { mBody = buf; }
   void setContentLength(int len) { mContentLength = len; }
-  void setVersion(const HttpRequest::HTTP_VERSION &version) {
-    mVersion = version;
-  }
+  void setVersion(const HttpRequest::HTTP_VERSION &version) { mVersion = version; }
 
   void setStatusMsg(const std::string &msg) { mStatusMsg = msg; }
   void setFilePath(const std::string &path) { mFilePath = path; }
   void setMime(const MimeType &mime) { mMime = mime; }
 
-  void addHeader(const std::string &key, const std::string &value) {
-    mHeaders[key] = value;
-  }
+  void addHeader(const std::string &key, const std::string &value) { mHeaders[key] = value; }
   bool closeConnection() const { return mCloseConnection; }
   const HttpRequest::HTTP_VERSION version() const { return mVersion; }
   const std::string &filePath() const { return mFilePath; }
@@ -65,7 +56,7 @@ class HttpResponse {
     if (mBody != nullptr) delete[] mBody;
   }
 
-  private:
+private:
   HttpStatusCode mStatusCode;
   HttpRequest::HTTP_VERSION mVersion;
   std::string mStatusMsg;

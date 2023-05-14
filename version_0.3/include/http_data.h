@@ -17,10 +17,10 @@ namespace csguide_webserver {
 class TimerNode;
 
 class HttpData : public std::enable_shared_from_this<HttpData> {
-  public:
+public:
   HttpData() : epoll_fd(-1) {}
 
-  public:
+public:
   std::shared_ptr<HttpRequest> request_;
   std::shared_ptr<HttpResponse> response_;
   std::shared_ptr<ClientSocket> clientSocket_;
@@ -30,7 +30,7 @@ class HttpData : public std::enable_shared_from_this<HttpData> {
 
   void setTimer(std::shared_ptr<TimerNode>);
 
-  private:
+private:
   std::weak_ptr<TimerNode> timer_;
 };
 

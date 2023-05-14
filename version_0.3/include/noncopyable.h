@@ -7,11 +7,11 @@
 
 namespace csguide_webserver {
 class Noncopyable {
-  public:
+public:
   Noncopyable(const Noncopyable&) = delete;
   Noncopyable& operator=(const Noncopyable&) = delete;
 
-  protected:
+protected:
   Noncopyable() = default;
   ~Noncopyable() = default;
 };

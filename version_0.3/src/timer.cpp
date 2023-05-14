@@ -3,11 +3,12 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
+#include "../include/timer.h"
+
 #include <sys/time.h>
 #include <unistd.h>
 
 #include "../include/epoll.h"
-#include "../include/timer.h"
 
 namespace csguide_webserver {
 
@@ -15,8 +16,7 @@ size_t TimerNode::current_msec = 0;  // 当前时间
 
 const size_t TimerManager::DEFAULT_TIME_OUT = 20 * 1000;  // 20s
 
-TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout)
-    : deleted_(false), httpData_(httpData) {
+TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout) : deleted_(false), httpData_(httpData) {
   current_time();
   expiredTime_ = current_msec + timeout;
 }
@@ -48,8 +48,7 @@ void TimerNode::deleted() {
   deleted_ = true;
 }
 
-void TimerManager::addTimer(std::shared_ptr<HttpData> httpData,
-                            size_t timeout) {
+void TimerManager::addTimer(std::shared_ptr<HttpData> httpData, size_t timeout) {
   Shared_TimerNode timerNode(new TimerNode(httpData, timeout));
   {
     MutexLockGuard guard(lock_);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #include "../include/ThreadPool.h"
@@ -12,11 +12,7 @@
 using namespace thread;
 
 ThreadPool::ThreadPool(int thread_s, int max_queue_s)
-    : max_queue_size(max_queue_s),
-      thread_size(thread_s),
-      condition_(mutex_),
-      started(0),
-      shutdown_(0) {
+    : max_queue_size(max_queue_s), thread_size(thread_s), condition_(mutex_), started(0), shutdown_(0) {
   if (thread_s <= 0 || thread_s > MAX_THREAD_SIZE) {
     thread_size = 4;
   }
@@ -96,8 +92,7 @@ void ThreadPool::run() {
         condition_.wait();
       }
 
-      if ((shutdown_ == immediate_mode) ||
-          (shutdown_ == graceful_mode && request_queue.empty())) {
+      if ((shutdown_ == immediate_mode) || (shutdown_ == graceful_mode && request_queue.empty())) {
         break;
       }
       // FIFO

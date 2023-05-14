@@ -3,6 +3,8 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
+#include "../../include/server.h"
+
 #include <fcntl.h>
 #include <sys/epoll.h>
 #include <sys/mman.h>
@@ -20,7 +22,6 @@
 #include "../../include/http_data.h"
 #include "../../include/http_parse.h"
 #include "../../include/http_response.h"
-#include "../../include/server.h"
 #include "../../include/thread_pool.h"
 #include "../../include/util.h"
 
@@ -89,8 +90,7 @@ void HttpServer::run(int thread_num, int max_queque_size) {
   //        }
   std::shared_ptr<HttpData> httpData(new HttpData());
   httpData->epoll_fd = epoll_fd;
-  serverSocket.epoll_fd =
-      epoll_fd;  // 之前就是这里忘了添加,导致穿进去的serverSocket具有不正确的epoll_fd
+  serverSocket.epoll_fd = epoll_fd;  // 之前就是这里忘了添加,导致穿进去的serverSocket具有不正确的epoll_fd
 
   __uint32_t event = (EPOLLIN | EPOLLET);
   Epoll::addfd(epoll_fd, serverSocket.listen_fd, event, httpData);
@@ -111,12 +111,10 @@ void HttpServer::run(int thread_num, int max_queque_size) {
 
     // test end
 
-    std::vector<std::shared_ptr<HttpData>> events =
-        Epoll::poll(serverSocket, 1024, -1);
+    std::vector<std::shared_ptr<HttpData>> events = Epoll::poll(serverSocket, 1024, -1);
     // FIXME 将事件传递给 线程池
     for (auto& req : events) {
-      threadPool.append(
-          req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
+      threadPool.append(req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
     }
     // 处理定时器超时事件
     Epoll::timerManager.handle_expired_event();
@@ -124,22 +122,19 @@ void HttpServer::run(int thread_num, int max_queque_size) {
 }
 
 void HttpServer::do_request(std::shared_ptr<void> arg) {
-  std::shared_ptr<HttpData> sharedHttpData =
-      std::static_pointer_cast<HttpData>(arg);
+  std::shared_ptr<HttpData> sharedHttpData = std::static_pointer_cast<HttpData>(arg);
 
   char buffer[BUFFERSIZE];
 
   bzero(buffer, BUFFERSIZE);
   int check_index = 0, read_index = 0, start_line = 0;
   ssize_t recv_data;
-  HttpRequestParser::PARSE_STATE parse_state =
-      HttpRequestParser::PARSE_REQUESTLINE;
+  HttpRequestParser::PARSE_STATE parse_state = HttpRequestParser::PARSE_REQUESTLINE;
 
   while (true) {
     // FIXME 这里也是同样的，由于是非阻塞IO，所以返回-1
     // 也不一定是错误，还需判断error
-    recv_data = recv(sharedHttpData->clientSocket_->fd, buffer + read_index,
-                     BUFFERSIZE - read_index, 0);
+    recv_data = recv(sharedHttpData->clientSocket_->fd, buffer + read_index, BUFFERSIZE - read_index, 0);
     if (recv_data == -1) {
       if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
         return;  // FIXME 请求不完整该怎么办，继续加定时器吗？还是直接关闭
@@ -156,8 +151,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
     read_index += recv_data;
 
     HttpRequestParser::HTTP_CODE retcode = HttpRequestParser::parse_content(
-        buffer, check_index, read_index, parse_state, start_line,
-        *sharedHttpData->request_);
+        buffer, check_index, read_index, parse_state, start_line, *sharedHttpData->request_);
 
     if (retcode == HttpRequestParser::NO_REQUEST) {
       continue;
@@ -165,14 +159,12 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
 
     if (retcode == HttpRequestParser::GET_REQUEST) {
       // FIXME 检查 keep_alive选项
-      auto it =
-          sharedHttpData->request_->mHeaders.find(HttpRequest::Connection);
+      auto it = sharedHttpData->request_->mHeaders.find(HttpRequest::Connection);
       if (it != sharedHttpData->request_->mHeaders.end()) {
         if (it->second == "keep-alive") {
           sharedHttpData->response_->setKeepAlive(true);
           // timeout=20s
-          sharedHttpData->response_->addHeader("Keep-Alive",
-                                               std::string("timeout=20"));
+          sharedHttpData->response_->addHeader("Keep-Alive", std::string("timeout=20"));
         } else {
           sharedHttpData->response_->setKeepAlive(false);
         }
@@ -189,11 +181,9 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
       if (sharedHttpData->response_->keep_alive()) {
         // FIXME std::cout << "再次添加定时器  keep_alive: " <<
         // sharedHttpData->clientSocket_->fd << std::endl;
-        Epoll::modfd(sharedHttpData->epoll_fd,
-                     sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS,
+        Epoll::modfd(sharedHttpData->epoll_fd, sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS,
                      sharedHttpData);
-        Epoll::timerManager.addTimer(sharedHttpData,
-                                     TimerManager::DEFAULT_TIME_OUT);
+        Epoll::timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
       }
 
     } else {
@@ -237,8 +227,7 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
   httpData->response_->setFilePath(filepath);
 }
 
-HttpServer::FileState HttpServer::static_file(
-        std::shared_ptr<HttpData> httpData, const std::string& base_path) {
+HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData, const std::string& base_path) {
   struct stat file_stat;
   std::string file = base_path + httpData->response_->filePath();
   // 如果是 / 结尾，则默认读取 /index.html
@@ -291,12 +280,10 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
     // 如果是 '/'开头就发送默认页
     if (httpData->response_->filePath() == std::string("/")) {
       // 现在使用测试页面
-      sprintf(header, "%sContent-length: %d\r\n\r\n", header,
-              strlen(INDEX_PAGE));
+      sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(INDEX_PAGE));
       sprintf(header, "%s%s", header, INDEX_PAGE);
     } else {
-      sprintf(header, "%sContent-length: %d\r\n\r\n", header,
-              strlen(NOT_FOUND_PAGE));
+      sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(NOT_FOUND_PAGE));
       sprintf(header, "%s%s", header, NOT_FOUND_PAGE);
     }
     ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
@@ -304,16 +291,14 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
   }
 
   if (fileState == FILE_FORBIDDEN) {
-    sprintf(header, "%sContent-length: %d\r\n\r\n", header,
-            strlen(FORBIDDEN_PAGE));
+    sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(FORBIDDEN_PAGE));
     sprintf(header, "%s%s", header, FORBIDDEN_PAGE);
     ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
     return;
   }
   // 获取文件状态
   if (stat(httpData->response_->filePath().c_str(), &file_stat) < 0) {
-    sprintf(header, "%sContent-length: %d\r\n\r\n", header,
-            strlen(internal_error));
+    sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
     sprintf(header, "%s%s", header, internal_error);
     ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
     return;
@@ -323,8 +308,7 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
   // 内部错误
   if (filefd < 0) {
     std::cout << "打开文件失败" << std::endl;
-    sprintf(header, "%sContent-length: %d\r\n\r\n", header,
-            strlen(internal_error));
+    sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
     sprintf(header, "%s%s", header, internal_error);
     ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
     close(filefd);
@@ -333,15 +317,13 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
 
   sprintf(header, "%sContent-length: %d\r\n\r\n", header, file_stat.st_size);
   ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
-  void* mapbuf =
-      mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, filefd, 0);
+  void* mapbuf = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, filefd, 0);
   ::send(httpData->clientSocket_->fd, mapbuf, file_stat.st_size, 0);
   munmap(mapbuf, file_stat.st_size);
   close(filefd);
   return;
 err:
-  sprintf(header, "%sContent-length: %d\r\n\r\n", header,
-          strlen(internal_error));
+  sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
   sprintf(header, "%s%s", header, internal_error);
   ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
   return;

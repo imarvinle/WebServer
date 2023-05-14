@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 #ifndef WEBSERVER_NONCOPYABLE_H
 #define WEBSERVER_NONCOPYABLE_H
 
 class noncopyable {
-  public:
+public:
   noncopyable(const noncopyable&) = delete;
   noncopyable& operator=(const noncopyable&) = delete;
 
-  protected:
+protected:
   noncopyable() = default;
   ~noncopyable() = default;
 };

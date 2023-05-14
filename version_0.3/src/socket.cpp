@@ -3,10 +3,11 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
+#include "../include/socket.h"
+
 #include <cstdio>
 #include <cstring>
 
-#include "../include/socket.h"
 #include "../include/util.h"
 
 namespace csguide_webserver {

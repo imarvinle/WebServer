@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #ifndef WEBSERVER_THREADPOLL_H
@@ -28,17 +28,17 @@ struct ThreadTask {
 };
 
 class ThreadPool {
-  public:
+public:
   ThreadPool(int thread_s, int max_queue_s);
   ~ThreadPool();
   bool append(thread::ThreadTask* request);
   void shutdown(bool graceful);
 
-  private:
+private:
   static void* worker(void* args);
   void run();
 
-  private:
+private:
   // 线程同步互斥, mutex_ 在 condition_前面
   MutexLock mutex_;
   Condition condition_;

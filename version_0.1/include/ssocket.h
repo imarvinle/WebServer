@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #ifndef WEBSERVER_SOCKET_H
@@ -19,7 +19,7 @@ class ClientSocket;
 void setReusePort(int fd);
 
 class ServerSocket {
-  public:
+public:
   ServerSocket(int port = 8080, const char *ip = nullptr);
   ~ServerSocket();
   void bind();
@@ -28,7 +28,7 @@ class ServerSocket {
 
   int accept(ClientSocket &);
 
-  public:
+public:
   sockaddr_in mAddr;
   int fd;
   int mPort;
@@ -36,7 +36,7 @@ class ServerSocket {
 };
 
 class ClientSocket {
-  public:
+public:
   ~ClientSocket();
 
   socklen_t mLen;

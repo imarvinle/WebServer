@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 #include "../include/httpparse.h"
 
@@ -12,23 +12,19 @@
 
 using namespace http;
 
-std::unordered_map<std::string, http::HttpRequest::HTTP_HEADER>
-    http::HttpRequest::header_map = {
-        {"HOST", http::HttpRequest::Host},
-        {"USER-AGENT", http::HttpRequest::User_Agent},
-        {"CONNECTION", http::HttpRequest::Connection},
-        {"ACCEPT-ENCODING", http::HttpRequest::Accept_Encoding},
-        {"ACCEPT-LANGUAGE", http::HttpRequest::Accept_Language},
-        {"ACCEPT", http::HttpRequest::Accept},
-        {"CACHE-CONTROL", http::HttpRequest::Cache_Control},
-        {"UPGRADE-INSECURE-REQUESTS",
-         http::HttpRequest::Upgrade_Insecure_Requests}};
+std::unordered_map<std::string, http::HttpRequest::HTTP_HEADER> http::HttpRequest::header_map = {
+    {"HOST", http::HttpRequest::Host},
+    {"USER-AGENT", http::HttpRequest::User_Agent},
+    {"CONNECTION", http::HttpRequest::Connection},
+    {"ACCEPT-ENCODING", http::HttpRequest::Accept_Encoding},
+    {"ACCEPT-LANGUAGE", http::HttpRequest::Accept_Language},
+    {"ACCEPT", http::HttpRequest::Accept},
+    {"CACHE-CONTROL", http::HttpRequest::Cache_Control},
+    {"UPGRADE-INSECURE-REQUESTS", http::HttpRequest::Upgrade_Insecure_Requests}};
 
 // 解析一行内容, buffer[checked_index, read_index)
 // check_index是需要分析的第一个字符， read_index已经读取数据末尾下一个字符
-HttpRequestParser::LINE_STATE HttpRequestParser::parse_line(char *buffer,
-                                                            int &checked_index,
-                                                            int &read_index) {
+HttpRequestParser::LINE_STATE HttpRequestParser::parse_line(char *buffer, int &checked_index, int &read_index) {
   char temp;
   for (; checked_index < read_index; checked_index++) {
     temp = buffer[checked_index];
@@ -50,8 +46,8 @@ HttpRequestParser::LINE_STATE HttpRequestParser::parse_line(char *buffer,
 }
 
 // 解析请求行
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_requestline(
-    char *line, PARSE_STATE &parse_state, HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::parse_requestline(char *line, PARSE_STATE &parse_state,
+                                                                  HttpRequest &request) {
   char *url = strpbrk(line, " \t");
   if (!url) {
     return BAD_REQUEST;
@@ -108,8 +104,8 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::parse_requestline(
 }
 
 // 分析头部字段
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_headers(
-    char *line, PARSE_STATE &parse_state, HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state,
+                                                              HttpRequest &request) {
   if (*line == '\0') {
     if (request.mMethod == HttpRequest::GET) {
       return GET_REQUEST;
@@ -132,8 +128,7 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::parse_headers(
     return NO_REQUEST;
   }
 
-  if ((it = HttpRequest::header_map.find(util::trim(key_s))) !=
-      (HttpRequest::header_map.end())) {
+  if ((it = HttpRequest::header_map.find(util::trim(key_s))) != (HttpRequest::header_map.end())) {
     request.mHeaders.insert(std::make_pair(it->second, util::trim(value_s)));
   } else {
     std::cout << "Header no support: " << key << " : " << value << std::endl;
@@ -143,21 +138,18 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::parse_headers(
 }
 
 // 解析body
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_body(
-    char *body, http::HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::parse_body(char *body, http::HttpRequest &request) {
   request.mContent = body;
   return GET_REQUEST;
 }
 
 // http 请求入口
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_content(
-    char *buffer, int &check_index, int &read_index,
-    http::HttpRequestParser::PARSE_STATE &parse_state, int &start_line,
-    HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::parse_content(char *buffer, int &check_index, int &read_index,
+                                                              http::HttpRequestParser::PARSE_STATE &parse_state,
+                                                              int &start_line, HttpRequest &request) {
   LINE_STATE line_state = LINE_OK;
   HTTP_CODE retcode = NO_REQUEST;
-  while ((line_state = parse_line(buffer, check_index, read_index)) ==
-         LINE_OK) {
+  while ((line_state = parse_line(buffer, check_index, read_index)) == LINE_OK) {
     char *temp = buffer + start_line;  // 这一行在buffer中的起始位置
     start_line = check_index;          // 下一行起始位置
 

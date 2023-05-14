@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
-#include <dirent.h>
 #include <stdio.h>
+
+#include <dirent.h>
 #include <unistd.h>
 
 #include <iostream>

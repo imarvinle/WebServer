@@ -13,10 +13,8 @@
 namespace csguide_webserver {
 
 class Condition : public Noncopyable {
-  public:
-  explicit Condition(MutexLock &mutex) : mutex_(mutex) {
-    pthread_cond_init(&cond_, NULL);
-  }
+public:
+  explicit Condition(MutexLock &mutex) : mutex_(mutex) { pthread_cond_init(&cond_, NULL); }
   ~Condition() { pthread_cond_destroy(&cond_); }
 
   void wait() { pthread_cond_wait(&cond_, mutex_.getMutex()); }
@@ -25,7 +23,7 @@ class Condition : public Noncopyable {
 
   void notifyAll() { pthread_cond_broadcast(&cond_); }
 
-  private:
+private:
   MutexLock &mutex_;
   pthread_cond_t cond_;
 };

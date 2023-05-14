@@ -24,20 +24,11 @@ struct MimeType {
 extern std::unordered_map<std::string, MimeType> Mime_map;
 
 class HttpResponse {
-  public:
-  enum HttpStatusCode {
-    Unknow,
-    k200Ok = 200,
-    k403forbiden = 403,
-    k404NotFound = 404
-  };
+public:
+  enum HttpStatusCode { Unknow, k200Ok = 200, k403forbiden = 403, k404NotFound = 404 };
 
   explicit HttpResponse(bool mkeep = true)
-      : mStatusCode(Unknow),
-        keep_alive_(mkeep),
-        mMime("text/html"),
-        mBody(nullptr),
-        mVersion(HttpRequest::HTTP_11) {}
+      : mStatusCode(Unknow), keep_alive_(mkeep), mMime("text/html"), mBody(nullptr), mVersion(HttpRequest::HTTP_11) {}
 
   void setStatusCode(HttpStatusCode code) { mStatusCode = code; }
 
@@ -45,9 +36,7 @@ class HttpResponse {
 
   void setContentLength(int len) { mContentLength = len; }
 
-  void setVersion(const HttpRequest::HTTP_VERSION &version) {
-    mVersion = version;
-  }
+  void setVersion(const HttpRequest::HTTP_VERSION &version) { mVersion = version; }
 
   void setStatusMsg(const std::string &msg) { mStatusMsg = msg; }
 
@@ -57,9 +46,7 @@ class HttpResponse {
 
   void setKeepAlive(bool isalive) { keep_alive_ = isalive; }
 
-  void addHeader(const std::string &key, const std::string &value) {
-    mHeaders[key] = value;
-  }
+  void addHeader(const std::string &key, const std::string &value) { mHeaders[key] = value; }
 
   bool keep_alive() const { return keep_alive_; }
 
@@ -77,7 +64,7 @@ class HttpResponse {
     if (mBody != nullptr) delete[] mBody;
   }
 
-  private:
+private:
   HttpStatusCode mStatusCode;
   HttpRequest::HTTP_VERSION mVersion;
   std::string mStatusMsg;

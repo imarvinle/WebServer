@@ -3,13 +3,14 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
+#include "../include/epoll.h"
+
 #include <sys/epoll.h>
 
 #include <cstdio>
 #include <iostream>
 #include <vector>
 
-#include "../include/epoll.h"
 #include "../include/util.h"
 
 namespace csguide_webserver {
@@ -33,8 +34,7 @@ int Epoll::init(int max_events) {
   return epoll_fd;
 }
 
-int Epoll::addfd(int epoll_fd, int fd, __uint32_t events,
-                 std::shared_ptr<HttpData> httpData) {
+int Epoll::addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData> httpData) {
   epoll_event event;
   event.events = (EPOLLIN | EPOLLET);
   event.data.fd = fd;
@@ -50,8 +50,7 @@ int Epoll::addfd(int epoll_fd, int fd, __uint32_t events,
   return 0;
 }
 
-int Epoll::modfd(int epoll_fd, int fd, __uint32_t events,
-                 std::shared_ptr<HttpData> httpData) {
+int Epoll::modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData> httpData) {
   epoll_event event;
   event.events = events;
   event.data.fd = fd;
@@ -103,23 +102,20 @@ void Epoll::handleConnection(const ServerSocket &serverSocket) {
 
     std::shared_ptr<HttpData> sharedHttpData(new HttpData);
     sharedHttpData->request_ = std::shared_ptr<HttpRequest>(new HttpRequest());
-    sharedHttpData->response_ =
-        std::shared_ptr<HttpResponse>(new HttpResponse());
+    sharedHttpData->response_ = std::shared_ptr<HttpResponse>(new HttpResponse());
 
     std::shared_ptr<ClientSocket> sharedClientSocket(new ClientSocket());
     sharedClientSocket.swap(tempClient);
     sharedHttpData->clientSocket_ = sharedClientSocket;
     sharedHttpData->epoll_fd = serverSocket.epoll_fd;
 
-    addfd(serverSocket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS,
-          sharedHttpData);
+    addfd(serverSocket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS, sharedHttpData);
     // FIXME 默认超时时间5 秒测试添加定时器
     timerManager.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
   }
 }
 
-std::vector<std::shared_ptr<HttpData>> Epoll::poll(
-    const ServerSocket &serverSocket, int max_event, int timeout) {
+std::vector<std::shared_ptr<HttpData>> Epoll::poll(const ServerSocket &serverSocket, int max_event, int timeout) {
   int event_num = epoll_wait(serverSocket.epoll_fd, events, max_event, timeout);
   if (event_num < 0) {
     std::cout << "epoll_num=" << event_num << std::endl;
@@ -138,8 +134,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(
       handleConnection(serverSocket);
     } else {
       // 出错的描述符，移除定时器， 关闭文件描述符
-      if ((events[i].events & EPOLLERR) || (events[i].events & EPOLLRDHUP) ||
-          (events[i].events & EPOLLHUP)) {
+      if ((events[i].events & EPOLLERR) || (events[i].events & EPOLLRDHUP) || (events[i].events & EPOLLHUP)) {
         auto it = httpDataMap.find(fd);
         if (it != httpDataMap.end()) {
           // 将HttpData节点和TimerNode的关联分开，这样HttpData会立即析构，在析构函数内关闭文件描述符等资源

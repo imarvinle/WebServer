@@ -1,11 +1,37 @@
----
 # 语言: None, Cpp, Java, JavaScript, ObjC, Proto, TableGen, TextProto
 Language: Cpp
 # 基于某一主题上的修改
 BasedOnStyle: Google
+Standard: c++11
+
+#单行长度限制
+ColumnLimit: 120
 # 缩进宽度
 IndentWidth: 2
 # 缩进case标签
 IndentCaseLabels: true
 # 访问说明符(public、private等)的偏移
-AccessModifierOffset: -4
+AccessModifierOffset: -2
+
+IncludeBlocks: Regroup
+
+IncludeCategories:
+  # Standard C Lirary (https://en.cppreference.com/w/c/header)
+  - Regex:           '^<(assert\.h|complex\.h|ctype\.h|errno\.h|fenv\.h|float\.h|inttypes\.h|iso646\.h|limits\.h|locale\.h|math\.h|setjmp\.h|signal\.h|stdalign\.h|stdarg\.h|stdatomic\.h|stdbool\.h|stddef\.h|stdint\.h|stdio\.h|stdlib\.h|stdnoreturn\.h|string\.h|tgmath\.h|threads\.h|time\.h|uchar\.h|wchar\.h|wctype\.h)>$'
+    Priority:        1
+
+  # Standard C++ Lirary
+  - Regex:           '^<(algorithm|any|array|atomic|bitset|cassert|ccomplex|cctype|cerrno|cfenv|cfloat|charconv|chrono|cinttypes|ciso646|climits|clocale|cmath|codecvt|compare|complex|condition_variable|csetjmp|csignal|cstdarg|cstdbool|cstddef|cstdint|cstdio|cstdlib|cstring|ctgmath|ctime|cwchar|cwctype|deque|exception|experimental/algorithm|experimental/any|experimental/chrono|experimental/coroutine|experimental/deque|experimental/dynarray|experimental/filesystem|experimental/forward_list|experimental/functional|experimental/iterator|experimental/list|experimental/map|experimental/memory_resource|experimental/numeric|experimental/optional|experimental/propagate_const|experimental/ratio|experimental/regex|experimental/set|experimental/simd|experimental/string|experimental/string_view|experimental/system_error|experimental/tuple|experimental/type_traits|experimental/unordered_map|experimental/unordered_set|experimental/utility|experimental/vector|ext/hash_map|ext/hash_set|filesystem|forward_list|fstream|functional|future|initializer_list|iomanip|ios|iosfwd|iostream|istream|iterator|limits|list|locale|map|memory|mutex|new|numeric|optional|ostream|queue|random|ratio|regex|scoped_allocator|set|shared_mutex|span|sstream|stack|stdexcept|streambuf|string|string_view|strstream|support/android|support/fuchsia|support/ibm|support/musl|support/newlib|support/solaris|support/win32|support/xlocale|system_error|thread|tuple|type_traits|typeindex|typeinfo|unordered_map|unordered_set|utility|valarray|variant|vector|version)>$'
+    Priority:        10
+
+  # Headers in <> with extension. (linux headers)
+  - Regex:           '^<([A-Za-z0-9.\Q/-_\E])+>$'
+    Priority:        2
+
+  # Headers in <> without extension. (system wide C++ headers)
+  - Regex:           '^<([A-Za-z0-9\Q/-_\E])+>$'
+    Priority:        11
+
+# 行注释 "//" 前增加两个空格
+SpacesBeforeTrailingComments: 2
+

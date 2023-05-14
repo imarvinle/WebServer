@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 #include "../include/ssocket.h"
 
@@ -9,8 +9,7 @@ void nsocket::setReusePort(int fd) {
   setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&opt, sizeof(opt));
 }
 
-nsocket::ServerSocket::ServerSocket(int port, const char *ip)
-    : mPort(port), mIp(ip) {
+nsocket::ServerSocket::ServerSocket(int port, const char *ip) : mPort(port), mIp(ip) {
   bzero(&mAddr, sizeof(mAddr));
   mAddr.sin_family = AF_INET;
   mAddr.sin_port = htons(port);
@@ -47,8 +46,7 @@ void nsocket::ServerSocket::listen() {
 }
 
 int nsocket::ServerSocket::accept(ClientSocket &clientSocket) {
-  int clientfd =
-      ::accept(fd, (struct sockaddr *)&clientSocket.mAddr, &clientSocket.mLen);
+  int clientfd = ::accept(fd, (struct sockaddr *)&clientSocket.mAddr, &clientSocket.mLen);
   if (clientfd < 0) {
     std::cout << "accept error in file <" << __FILE__ << "> "
               << "at " << __LINE__ << std::endl;

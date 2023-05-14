@@ -3,15 +3,16 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
-#include <fcntl.h>
+#include "../include/util.h"
+
 #include <signal.h>
+
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include <cstring>
 #include <string>
-
-#include "../include/util.h"
 
 namespace csguide_webserver {
 

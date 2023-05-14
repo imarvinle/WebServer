@@ -16,12 +16,13 @@
  *
  */
 
+#include <signal.h>
+#include <time.h>
+
 #include <getopt.h>
 #include <rpc/types.h>
-#include <signal.h>
 #include <strings.h>
 #include <sys/param.h>
-#include <time.h>
 #include <unistd.h>
 
 #include "socket.c"
@@ -54,22 +55,21 @@ char host[MAXHOSTNAMELEN];
 #define REQUEST_SIZE 2048
 char request[REQUEST_SIZE];
 
-static const struct option long_options[] = {
-    {"force", no_argument, &force, 1},
-    {"reload", no_argument, &force_reload, 1},
-    {"time", required_argument, NULL, 't'},
-    {"help", no_argument, NULL, '?'},
-    {"http09", no_argument, NULL, '9'},
-    {"http10", no_argument, NULL, '1'},
-    {"http11", no_argument, NULL, '2'},
-    {"get", no_argument, &method, METHOD_GET},
-    {"head", no_argument, &method, METHOD_HEAD},
-    {"options", no_argument, &method, METHOD_OPTIONS},
-    {"trace", no_argument, &method, METHOD_TRACE},
-    {"version", no_argument, NULL, 'V'},
-    {"proxy", required_argument, NULL, 'p'},
-    {"clients", required_argument, NULL, 'c'},
-    {NULL, 0, NULL, 0}};
+static const struct option long_options[] = {{"force", no_argument, &force, 1},
+                                             {"reload", no_argument, &force_reload, 1},
+                                             {"time", required_argument, NULL, 't'},
+                                             {"help", no_argument, NULL, '?'},
+                                             {"http09", no_argument, NULL, '9'},
+                                             {"http10", no_argument, NULL, '1'},
+                                             {"http11", no_argument, NULL, '2'},
+                                             {"get", no_argument, &method, METHOD_GET},
+                                             {"head", no_argument, &method, METHOD_HEAD},
+                                             {"options", no_argument, &method, METHOD_OPTIONS},
+                                             {"trace", no_argument, &method, METHOD_TRACE},
+                                             {"version", no_argument, NULL, 'V'},
+                                             {"proxy", required_argument, NULL, 'p'},
+                                             {"clients", required_argument, NULL, 'c'},
+                                             {NULL, 0, NULL, 0}};
 
 /* prototypes */
 static void benchcore(const char *host, const int port, const char *request);
@@ -79,24 +79,23 @@ static void build_request(const char *url);
 static void alarm_handler(int signal) { timerexpired = 1; }
 
 static void usage(void) {
-  fprintf(
-      stderr,
-      "webbench [option]... URL\n"
-      "  -f|--force               Don't wait for reply from server.\n"
-      "  -r|--reload              Send reload request - Pragma: no-cache.\n"
-      "  -t|--time <sec>          Run benchmark for <sec> seconds. Default "
-      "30.\n"
-      "  -p|--proxy <server:port> Use proxy server for request.\n"
-      "  -c|--clients <n>         Run <n> HTTP clients at once. Default one.\n"
-      "  -9|--http09              Use HTTP/0.9 style requests.\n"
-      "  -1|--http10              Use HTTP/1.0 protocol.\n"
-      "  -2|--http11              Use HTTP/1.1 protocol.\n"
-      "  --get                    Use GET request method.\n"
-      "  --head                   Use HEAD request method.\n"
-      "  --options                Use OPTIONS request method.\n"
-      "  --trace                  Use TRACE request method.\n"
-      "  -?|-h|--help             This information.\n"
-      "  -V|--version             Display program version.\n");
+  fprintf(stderr,
+          "webbench [option]... URL\n"
+          "  -f|--force               Don't wait for reply from server.\n"
+          "  -r|--reload              Send reload request - Pragma: no-cache.\n"
+          "  -t|--time <sec>          Run benchmark for <sec> seconds. Default "
+          "30.\n"
+          "  -p|--proxy <server:port> Use proxy server for request.\n"
+          "  -c|--clients <n>         Run <n> HTTP clients at once. Default one.\n"
+          "  -9|--http09              Use HTTP/0.9 style requests.\n"
+          "  -1|--http10              Use HTTP/1.0 protocol.\n"
+          "  -2|--http11              Use HTTP/1.1 protocol.\n"
+          "  --get                    Use GET request method.\n"
+          "  --head                   Use HEAD request method.\n"
+          "  --options                Use OPTIONS request method.\n"
+          "  --trace                  Use TRACE request method.\n"
+          "  -?|-h|--help             This information.\n"
+          "  -V|--version             Display program version.\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -109,8 +108,7 @@ int main(int argc, char *argv[]) {
     return 2;
   }
 
-  while ((opt = getopt_long(argc, argv, "912Vfrt:p:c:?h", long_options,
-                            &options_index)) != EOF) {
+  while ((opt = getopt_long(argc, argv, "912Vfrt:p:c:?h", long_options, &options_index)) != EOF) {
     switch (opt) {
       case 0:
         break;
@@ -143,14 +141,11 @@ int main(int argc, char *argv[]) {
           break;
         }
         if (tmp == optarg) {
-          fprintf(stderr, "Error in option --proxy %s: Missing hostname.\n",
-                  optarg);
+          fprintf(stderr, "Error in option --proxy %s: Missing hostname.\n", optarg);
           return 2;
         }
         if (tmp == optarg + strlen(optarg) - 1) {
-          fprintf(stderr,
-                  "Error in option --proxy %s Port number is missing.\n",
-                  optarg);
+          fprintf(stderr, "Error in option --proxy %s Port number is missing.\n", optarg);
           return 2;
         }
         *tmp = '\0';
@@ -178,10 +173,9 @@ int main(int argc, char *argv[]) {
   if (benchtime == 0) benchtime = 30;
 
   /* Copyright */
-  fprintf(stderr,
-          "Webbench - Simple Web Benchmark " PROGRAM_VERSION
-          "\n"
-          "Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.\n");
+  fprintf(stderr, "Webbench - Simple Web Benchmark " PROGRAM_VERSION
+                  "\n"
+                  "Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.\n");
 
   build_request(argv[optind]);
 
@@ -222,8 +216,7 @@ int main(int argc, char *argv[]) {
   printf(", running %d sec", benchtime);
 
   if (force) printf(", early socket close");
-  if (proxyhost != NULL)
-    printf(", via proxy server %s:%d", proxyhost, proxyport);
+  if (proxyhost != NULL) printf(", via proxy server %s:%d", proxyhost, proxyport);
   if (force_reload) printf(", forcing reload");
 
   printf(".\n");
@@ -288,13 +281,11 @@ void build_request(const char *url) {
 
   if (proxyhost == NULL) {
     /* get port from hostname */
-    if (index(url + i, ':') != NULL &&
-        index(url + i, ':') < index(url + i, '/')) {
+    if (index(url + i, ':') != NULL && index(url + i, ':') < index(url + i, '/')) {
       strncpy(host, url + i, strchr(url + i, ':') - url - i);
       // bzero(tmp,10);
       memset(tmp, 0, 10);
-      strncpy(tmp, index(url + i, ':') + 1,
-              strchr(url + i, '/') - index(url + i, ':') - 1);
+      strncpy(tmp, index(url + i, ':') + 1, strchr(url + i, '/') - index(url + i, ':') - 1);
       /* printf("tmp=%s\n",tmp); */
       proxyport = atoi(tmp);
       if (proxyport == 0) proxyport = 80;
@@ -315,8 +306,7 @@ void build_request(const char *url) {
 
   strcat(request, "\r\n");
 
-  if (http10 > 0)
-    strcat(request, "User-Agent: WebBench " PROGRAM_VERSION "\r\n");
+  if (http10 > 0) strcat(request, "User-Agent: WebBench " PROGRAM_VERSION "\r\n");
   if (proxyhost == NULL && http10 > 0) {
     strcat(request, "Host: ");
     strcat(request, host);
@@ -430,8 +420,7 @@ static int bench(void) {
     printf(
         "\nSpeed=%d pages/min, %d bytes/sec.\nRequests: %d susceed, %d "
         "failed.\n",
-        (int)((speed + failed) / (benchtime / 60.0f)),
-        (int)(bytes / (float)benchtime), speed, failed);
+        (int)((speed + failed) / (benchtime / 60.0f)), (int)(bytes / (float)benchtime), speed, failed);
   }
 
   return i;
