@@ -12,7 +12,7 @@
 
 namespace csguide_webserver {
 
-void setReusePort(int fd) {
+void SetReusePort(int fd) {
   int opt = 1;
   setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&opt, sizeof(opt));
 }
@@ -32,8 +32,8 @@ ServerSocket::ServerSocket(int port, const char *ip) : port_(port), ip_(ip) {
               << "at " << __LINE__ << std::endl;
     exit(0);
   }
-  setReusePort(listen_fd_);
-    SetNonBlocking(listen_fd_);  // FIXME 之前没加，导致循环接受阻塞了
+  SetReusePort(listen_fd_);
+  SetNonBlocking(listen_fd_);  // FIXME 之前没加，导致循环接受阻塞了
 }
 
 void ServerSocket::Bind() {
