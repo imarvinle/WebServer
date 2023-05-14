@@ -70,4 +70,11 @@ int check_base_path(char *basePath) {
     return 0;
 }
 
+bool endsWith(std::string const &str, std::string const &suffix) {
+    if (str.length() < suffix.length()) {
+        return false;
+    }
+    return str.rfind(suffix) == str.size() - suffix.size();
+}
+
 

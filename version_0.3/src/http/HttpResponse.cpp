@@ -25,6 +25,7 @@ std::unordered_map<std::string, MimeType> Mime_map = {
         {".avi", "video/x-msvideo"},
         {".gz", "application/x-gzip"},
         {".tar", "application/x-tar"},
+        {".svg", "image/svg+xml"},
         {".css", "text/css"},
         {"", "text/plain"},
         {"default","text/plain"}

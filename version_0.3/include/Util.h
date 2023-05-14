@@ -22,7 +22,7 @@ void handle_for_sigpipe();
 
 int check_base_path(char *basePath);
 
-
+bool endsWith(std::string const &str, std::string const &suffix);
 
 
 //#endif //WEBSERVER_UTILS_H

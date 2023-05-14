@@ -173,7 +173,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             getMime(sharedHttpData);
             // FIXME 之前测试时写死的了文件路径导致上服务器出错
             //static_file(sharedHttpData, "/Users/lichunlin/CLionProjects/webserver/version_0.1");
-            FileState  fileState = static_file(sharedHttpData, basePath.c_str());
+            FileState  fileState = static_file(sharedHttpData, basePath);
             send(sharedHttpData, fileState);
             // 如果是keep_alive else sharedHttpData将会自动析构释放clientSocket，从而关闭资源
             if (sharedHttpData->response_->keep_alive()) {
@@ -223,28 +223,28 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
     httpData->response_->setFilePath(filepath);
 }
 
-HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData, const char *basepath) {
+HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData, const std::string& base_path) {
     struct stat file_stat;
-    char file[strlen(basepath) + strlen(httpData->response_->filePath().c_str())+1];
-    strcpy(file, basepath);
-    strcat(file, httpData->response_->filePath().c_str());
+    std::string file = base_path + httpData->response_->filePath();
+    // 如果是 / 结尾，则默认读取 /index.html 扩展，比如访问，csguide.cn/，则默认读取 csguide.cn/index.html
+    if (endsWith(file, "/")) {
+        file  = file + "index.html";
+        // 并且重新设置 mime 为 html
+        httpData->response_->setMime(MimeType("text/html"));
+    }
 
     // 文件不存在
-    if (httpData->response_->filePath() == "/" || stat(file, &file_stat) < 0) {
+    if (stat(file.c_str(), &file_stat) < 0) {
         // FIXME 设置Mime 为 html
         httpData->response_->setMime(MimeType("text/html"));
-        if (httpData->response_->filePath() == "/") {
-            httpData->response_->setStatusCode(HttpResponse::k200Ok);
-            httpData->response_->setStatusMsg("OK");
-        } else {
-            httpData->response_->setStatusCode(HttpResponse::k404NotFound);
-            httpData->response_->setStatusMsg("Not Found");
-        }
+        httpData->response_->setStatusCode(HttpResponse::k404NotFound);
+        httpData->response_->setStatusMsg("Not Found");
         // 废弃， 404就不需要设置filepath
         //httpData->response_->setFilePath(std::string(basepath)+"/404.html");
         //std::cout << "File Not Found: " <<   file << std::endl;
         return FIlE_NOT_FOUND;
     }
+    
     // 不是普通文件或无访问权限
     if(!S_ISREG(file_stat.st_mode)){
         // FIXME 设置Mime 为 html
@@ -272,7 +272,6 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
     httpData->response_->appenBuffer(header);
     // 404
     if (fileState == FIlE_NOT_FOUND) {
-
         // 如果是 '/'开头就发送默认页
         if (httpData->response_->filePath() == std::string("/")) {
             // 现在使用测试页面

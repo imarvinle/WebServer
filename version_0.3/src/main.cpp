@@ -18,8 +18,8 @@
 
 
 
-std::string basePath = ".";   //默认是程序当前目录
-
+// 这是默认目录，也就是当前项目的 pages 子目录
+std::string basePath = "./pages/";   //
 
 void daemon_run()
 {

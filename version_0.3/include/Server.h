@@ -41,7 +41,7 @@ private:
 
     void header(std::shared_ptr<HttpData>);
 
-    FileState static_file(std::shared_ptr<HttpData>, const char *);
+    FileState static_file(std::shared_ptr<HttpData>, const std::string& base_path);
 
     void send(std::shared_ptr<HttpData>, FileState);
 
