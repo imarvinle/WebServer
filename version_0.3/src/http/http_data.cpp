@@ -17,6 +17,6 @@ void HttpData::CloseTimer() {
   }
 }
 
-void HttpData::SetTimer(std::shared_ptr<TimerNode>) { timer_ = timer; }
+void HttpData::SetTimer(std::shared_ptr<TimerNode> timer) { timer_ = timer; }
 
 }  // namespace csguide_webserver
