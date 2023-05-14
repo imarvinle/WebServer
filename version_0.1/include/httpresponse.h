@@ -5,101 +5,78 @@
 #ifndef WEBSERVER_HTTPRESPONSE_H
 #define WEBSERVER_HTTPRESPONSE_H
 
-#include "httpparse.h"
-
 #include <string>
 #include <unordered_map>
+
+#include "httpparse.h"
 
 #define BASEPATH
 
 namespace http {
 
+struct MimeType {
+  MimeType(const std::string &str) : type(str){};
+  MimeType(const char *str) : type(str){};
 
-    struct MimeType {
-        MimeType(const std::string& str): type(str) {};
-        MimeType(const char *str): type(str) {};
+  std::string type;
+};
 
-        std:: string type;
-    };
+extern std::unordered_map<std::string, http::MimeType> Mime_map;
 
-    extern std::unordered_map<std::string, http::MimeType> Mime_map;
+class HttpResponse {
+  public:
+  enum HttpStatusCode {
+    Unknow,
+    k200Ok = 200,
+    k403forbiden = 403,
+    k404NotFound = 404
+  };
 
-    class HttpResponse {
+  explicit HttpResponse(bool close)
+      : mStatusCode(Unknow),
+        mCloseConnection(close),
+        mMime("text/html"),
+        mBody(nullptr),
+        mVersion(HttpRequest::HTTP_11) {}
 
-    public:
-        enum HttpStatusCode {
-            Unknow,
-            k200Ok = 200,
-            k403forbiden = 403,
-            k404NotFound = 404
-        };
+  void setStatusCode(HttpStatusCode code) { mStatusCode = code; }
+  void setBody(const char *buf) { mBody = buf; }
+  void setContentLength(int len) { mContentLength = len; }
+  void setVersion(const HttpRequest::HTTP_VERSION &version) {
+    mVersion = version;
+  }
 
-        explicit HttpResponse(bool close)
-                : mStatusCode(Unknow), mCloseConnection(close), mMime("text/html"),mBody(nullptr), mVersion(HttpRequest::HTTP_11){}
+  void setStatusMsg(const std::string &msg) { mStatusMsg = msg; }
+  void setFilePath(const std::string &path) { mFilePath = path; }
+  void setMime(const MimeType &mime) { mMime = mime; }
 
-        void setStatusCode(HttpStatusCode code) {
-            mStatusCode = code;
-        }
-        void setBody(const char *buf) {
-            mBody = buf;
-        }
-        void setContentLength(int len) {
-            mContentLength = len;
-        }
-        void setVersion(const HttpRequest::HTTP_VERSION& version) {
-            mVersion = version;
-        }
+  void addHeader(const std::string &key, const std::string &value) {
+    mHeaders[key] = value;
+  }
+  bool closeConnection() const { return mCloseConnection; }
+  const HttpRequest::HTTP_VERSION version() const { return mVersion; }
+  const std::string &filePath() const { return mFilePath; }
+  HttpStatusCode statusCode() const { return mStatusCode; }
+  const std::string &statusMsg() const { return mStatusMsg; }
 
-        void setStatusMsg(const std::string &msg) {
-            mStatusMsg = msg;
-        }
-        void setFilePath(const std::string &path) {
-            mFilePath = path;
-        }
-        void setMime(const MimeType &mime) {
-            mMime = mime;
-        }
+  void appenBuffer(char *) const;
 
-        void addHeader(const std::string &key, const std::string &value){
-            mHeaders[key] = value;
-        }
-        bool closeConnection() const  {
-            return mCloseConnection;
-        }
-        const HttpRequest::HTTP_VERSION version() const {
-            return mVersion;
-        }
-        const std::string& filePath() const {
-            return mFilePath;
-        }
-        HttpStatusCode  statusCode() const {
-            return mStatusCode;
-        }
-        const std::string& statusMsg() const {
-            return mStatusMsg;
-        }
+  ~HttpResponse() {
+    if (mBody != nullptr) delete[] mBody;
+  }
 
-        void appenBuffer(char *) const;
+  private:
+  HttpStatusCode mStatusCode;
+  HttpRequest::HTTP_VERSION mVersion;
+  std::string mStatusMsg;
+  bool mCloseConnection;
+  MimeType mMime;
+  const char *mBody;
+  int mContentLength;
+  std::string mFilePath;
+  std::unordered_map<std::string, std::string> mHeaders;
+};
 
-        ~HttpResponse() {
-            if (mBody != nullptr)
-                delete[] mBody;
-        }
+}  // namespace http
 
-
-    private:
-        HttpStatusCode mStatusCode;
-        HttpRequest::HTTP_VERSION mVersion;
-        std::string mStatusMsg;
-        bool mCloseConnection;
-        MimeType mMime;
-        const char *mBody;
-        int mContentLength;
-        std::string mFilePath;
-        std::unordered_map<std::string, std::string> mHeaders;
-    };
-
-
-}
-
-#endif //WEBSERVER_HTTPRESPONSE_H
+#endif  // WEBSERVER_HTTPRESPONSE_H

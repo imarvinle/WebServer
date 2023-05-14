@@ -7,59 +7,56 @@
 
 #pragma once
 
-#include <vector>
-#include <list>
-#include <functional>
 #include <pthread.h>
+
+#include <functional>
+#include <list>
 #include <memory>
+#include <vector>
 
-
-#include "noncopyable.h"
-#include "MutexLock.h"
 #include "Condition.h"
+#include "MutexLock.h"
+#include "noncopyable.h"
 
 const int MAX_THREAD_SIZE = 1024;
 const int MAX_QUEUE_SIZE = 10000;
 
-typedef enum {
-    immediate_mode = 1,
-    graceful_mode = 2
-} ShutdownMode;
+typedef enum { immediate_mode = 1, graceful_mode = 2 } ShutdownMode;
 
 struct ThreadTask {
-    std::function<void(std::shared_ptr<void>)> process;     // 实际传入的是Server::do_request;
-    std::shared_ptr<void> arg;   // 实际应该是HttpData对象
+  std::function<void(std::shared_ptr<void>)>
+      process;                // 实际传入的是Server::do_request;
+  std::shared_ptr<void> arg;  // 实际应该是HttpData对象
 };
-
 
 class ThreadPool {
-public:
-    ThreadPool(int thread_s, int max_queue_s);
+  public:
+  ThreadPool(int thread_s, int max_queue_s);
 
-    ~ThreadPool();
+  ~ThreadPool();
 
-    bool append(std::shared_ptr<void> arg, std::function<void(std::shared_ptr<void>)> fun);
+  bool append(std::shared_ptr<void> arg,
+              std::function<void(std::shared_ptr<void>)> fun);
 
-    void shutdown(bool graceful);
+  void shutdown(bool graceful);
 
-private:
-    static void *worker(void *args);
+  private:
+  static void *worker(void *args);
 
-    void run();
+  void run();
 
-private:
-    // 线程同步互斥, mutex_ 在 condition_前面
-    MutexLock mutex_;
-    Condition condition_;
+  private:
+  // 线程同步互斥, mutex_ 在 condition_前面
+  MutexLock mutex_;
+  Condition condition_;
 
-    // 线程池属性
-    int thread_size;
-    int max_queue_size;
-    int started;
-    int shutdown_;
-    std::vector<pthread_t> threads;
-    std::list<ThreadTask> request_queue;
+  // 线程池属性
+  int thread_size;
+  int max_queue_size;
+  int started;
+  int shutdown_;
+  std::vector<pthread_t> threads;
+  std::list<ThreadTask> request_queue;
 };
-
 
 //#endif //WEBSERVER_THREADPOLL_H

@@ -8,10 +8,10 @@
 #include <string>
 
 namespace util {
-    using namespace std;
-     std::string& ltrim(string &);
-     std::string& rtrim(string &);
-     std::string& trim(string &);
-}
+using namespace std;
+std::string& ltrim(string&);
+std::string& rtrim(string&);
+std::string& trim(string&);
+}  // namespace util
 
-#endif //WEBSERVER_UTILS_H
+#endif  // WEBSERVER_UTILS_H

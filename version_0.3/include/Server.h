@@ -6,50 +6,42 @@
 //#define WEBSERVER_SERVER_H
 #pragma once
 
-#include "Socket.h"
-#include "HttpParse.h"
-#include "HttpResponse.h"
-#include "HttpData.h"
 #include <memory>
 
-
+#include "HttpData.h"
+#include "HttpParse.h"
+#include "HttpResponse.h"
+#include "Socket.h"
 
 #define BUFFERSIZE 2048
 
-
-
-
 class HttpServer {
-public:
-    enum FileState {
-        FILE_OK,
-        FIlE_NOT_FOUND,
-        FILE_FORBIDDEN
-    };
+  public:
+  enum FileState { FILE_OK, FIlE_NOT_FOUND, FILE_FORBIDDEN };
 
-public:
-    explicit HttpServer(int port = 80, const char *ip = nullptr) : serverSocket(port, ip) {
-        serverSocket.bind();
-        serverSocket.listen();
-    }
+  public:
+  explicit HttpServer(int port = 80, const char* ip = nullptr)
+      : serverSocket(port, ip) {
+    serverSocket.bind();
+    serverSocket.listen();
+  }
 
-    void run(int, int max_queue_size = 10000);
+  void run(int, int max_queue_size = 10000);
 
-    void do_request(std::shared_ptr<void> arg);
+  void do_request(std::shared_ptr<void> arg);
 
-private:
+  private:
+  void header(std::shared_ptr<HttpData>);
 
-    void header(std::shared_ptr<HttpData>);
+  FileState static_file(std::shared_ptr<HttpData>,
+                        const std::string& base_path);
 
-    FileState static_file(std::shared_ptr<HttpData>, const std::string& base_path);
+  void send(std::shared_ptr<HttpData>, FileState);
 
-    void send(std::shared_ptr<HttpData>, FileState);
+  void getMime(std::shared_ptr<HttpData>);
+  void hanleIndex();
 
-    void getMime(std::shared_ptr<HttpData>);
-    void hanleIndex();
-
-    ServerSocket serverSocket;
+  ServerSocket serverSocket;
 };
-
 
 //#endif //WEBSERVER_SERVER_H

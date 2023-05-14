@@ -5,44 +5,42 @@
 #ifndef WEBSERVER_SOCKET_H
 #define WEBSERVER_SOCKET_H
 
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
 #include <iostream>
 
 namespace nsocket {
-    class ClientSocket;
+class ClientSocket;
 
-    void setReusePort(int fd);
+void setReusePort(int fd);
 
+class ServerSocket {
+  public:
+  ServerSocket(int port = 8080, const char *ip = nullptr);
+  ~ServerSocket();
+  void bind();
 
-    class ServerSocket {
+  void listen();
 
-    public:
-        ServerSocket(int port = 8080, const char *ip = nullptr);
-        ~ServerSocket();
-        void bind();
+  int accept(ClientSocket &);
 
-        void listen();
+  public:
+  sockaddr_in mAddr;
+  int fd;
+  int mPort;
+  const char *mIp;
+};
 
-        int accept(ClientSocket &);
+class ClientSocket {
+  public:
+  ~ClientSocket();
 
-    public:
-        sockaddr_in mAddr;
-        int fd;
-        int mPort;
-        const char *mIp;
-    };
-
-    class ClientSocket {
-
-    public:
-        ~ClientSocket();
-
-        socklen_t  mLen;
-        sockaddr_in mAddr;
-        int fd;
-    };
-}
-#endif //WEBSERVER_SOCKET_H
+  socklen_t mLen;
+  sockaddr_in mAddr;
+  int fd;
+};
+}  // namespace nsocket
+#endif  // WEBSERVER_SOCKET_H
