@@ -9,7 +9,7 @@
 
 这是一个轻量级的Web服务器，目前支持GET、HEAD方法处理静态资源。并发模型选择: 单进程＋Reactor+非阻塞方式运行。
 
-测试页面: [http://marvinle.cn:8080/](http://marvinle.cn:8080/)
+测试页面: [http://csguide.cn:8080/](http://csguide.cn:8080/)
 
 
 ---
