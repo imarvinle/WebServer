@@ -110,7 +110,7 @@ void Epoll::HandleConnection(const ServerSocket &server_socket) {
     std::shared_ptr<ClientSocket> sharedClientSocket(new ClientSocket());
     sharedClientSocket.swap(tempClient);
     sharedHttpData->client_socket_ = sharedClientSocket;
-    sharedHttpData->epoll_fd = serverSocket.epoll_fd;
+    sharedHttpData->epoll_fd = server_socket.epoll_fd;
     Addfd(server_socket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS, sharedHttpData);
     // FIXME 默认超时时间5 秒测试添加定时器
     timer_manager_.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
