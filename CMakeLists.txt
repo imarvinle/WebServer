@@ -42,10 +42,13 @@ set(SOURCE_FILES
         version_0.3/src/http/http_parse.cpp
         version_0.3/src/http/http_response.cpp
         version_0.3/src/http/server.cpp
+        version_0.3/src/util/util.cpp
+        version_0.3/src/util/ini_file.cpp
+        version_0.3/src/util/ini_section.cpp
+        version_0.3/src/util/logger.cpp
         version_0.3/src/socket.cpp
         version_0.3/src/thread_pool.cpp
         version_0.3/src/timer.cpp
-        version_0.3/src/util.cpp
         version_0.3/src/epoll.cpp
         version_0.3/src/main.cpp
         )

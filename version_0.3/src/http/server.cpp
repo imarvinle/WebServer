@@ -73,8 +73,8 @@ char INDEX_PAGE[] =
 
 char TEST[] = "HELLO WORLD";
 
-void HttpServer::Run(int thread_num, int max_queue_size) {
-  ThreadPool threadPool(thread_num, max_queue_size);
+void HttpServer::Run(int max_queue_size) {
+  ThreadPool threadPool(server_conf_.thread_num, max_queue_size);
 
   //        ClientSocket *clientSocket = new ClientSocket;
   //        serverSocket.accept(*clientSocket);
@@ -174,7 +174,7 @@ void HttpServer::DoRequest(std::shared_ptr<void> arg) {
       // FIXME 之前测试时写死的了文件路径导致上服务器出错
       // static_file(sharedHttpData,
       // "/Users/lichunlin/CLionProjects/webserver/version_0.1");
-      FileState fileState = StaticFile(sharedHttpData, base_path_);
+      FileState fileState = StaticFile(sharedHttpData);
         Send(sharedHttpData, fileState);
       // 如果是keep_alive else
       // sharedHttpData将会自动析构释放clientSocket，从而关闭资源
@@ -227,9 +227,9 @@ void HttpServer::GetMime(std::shared_ptr<HttpData> http_data) {
         http_data->response_->SetFilePath(filepath);
 }
 
-HttpServer::FileState HttpServer::StaticFile(std::shared_ptr<HttpData> http_data, const std::string& base_path) {
+HttpServer::FileState HttpServer::StaticFile(std::shared_ptr<HttpData> http_data) {
   struct stat file_stat;
-  std::string file = base_path + http_data->response_->FilePath();
+  std::string file = server_conf_.root + http_data->response_->FilePath();
   // 如果是 / 结尾，则默认读取 /index.html
   // 扩展，比如访问，csguide.cn/，则默认读取 csguide.cn/index.html
   if (EndsWith(file, "/")) {

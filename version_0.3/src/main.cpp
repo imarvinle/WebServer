@@ -16,13 +16,12 @@
 #include <iostream>
 #include <string>
 
+#include "../include/logger.h"
 #include "../include/server.h"
 #include "../include/util.h"
 
 using namespace csguide_webserver;
 
-// 这是默认目录，也就是当前项目的 pages 子目录
-std::string basePath = "./pages/";  //
 
 void daemon_run() {
   int pid;
@@ -54,67 +53,63 @@ void daemon_run() {
   if (fd > 2) close(fd);
 }
 
+void CheckConf(ServerConf &server_conf) {
+  int ret = CheckBasePath(server_conf.root);
+  if (ret != 0) {
+    Logger::GetInstance().LogRun("Warning: \"%s\" 不存在或不可访问, 将使用当前目录作为网站根目录", optarg);
+    char CurrenctPath[256];
+    // 获取当前目录出错，使用 . 代替
+    if (getcwd(CurrenctPath, 300) == NULL) {
+      Logger::GetInstance().LogErr("getcwd err");
+      server_conf.root = ".";
+    } else {
+      server_conf.root = CurrenctPath;
+    }
+  }
+  // 去除最后的 / ，因为 basepath + url，url部分有 /
+  if (server_conf.root[server_conf.root.size() - 1] == '/') {
+    server_conf.root.pop_back();
+  }
+}
+
 int main(int argc, char **argv) {
-  int threadNumber = 4;  //  默认线程数
-  int port = 7244;       // 默认端口
-  char tempPath[256];
   int opt;
-  const char *str = "t:p:r:d";
-  bool daemon = false;
+  const char *str = "f:";
+
+  ServerConf server_conf;
 
   while ((opt = getopt(argc, argv, str)) != -1) {
     switch (opt) {
-      case 't': {
-        threadNumber = atoi(optarg);
-        break;
-      }
-      case 'r': {
-        int ret = CheckBasePath(optarg);
-        if (ret == -1) {
-          printf(
-              "Warning: \"%s\" 不存在或不可访问, "
-              "将使用当前目录作为网站根目录\n",
-              optarg);
-          if (getcwd(tempPath, 300) == NULL) {
-            perror("getcwd error");
-            basePath = ".";
-          } else {
-            basePath = tempPath;
+      case 'f': {
+        if (optarg != NULL) {
+          int ret = ParseConfig(optarg, server_conf);
+          if (0 != ret) {
+            Logger::GetInstance().LogErr("ParseConfig Err, exit");
+            exit(ret);
           }
-          break;
+        } else {
+          Logger::GetInstance().LogErr("empty opt: f");
         }
-        if (optarg[strlen(optarg) - 1] == '/') {
-          optarg[strlen(optarg) - 1] = '\0';
-        }
-        basePath = optarg;
         break;
       }
-      case 'p': {
-        // FIXME 端口合法性校验
-        port = atoi(optarg);
-        break;
-      }
-      case 'd': {
-        daemon = true;
-        break;
-      }
-
-      default:
-        break;
     }
   }
 
-  if (daemon) daemon_run();
+  CheckConf(server_conf);
 
   //  输出配置信息
   {
-    printf("*******LC WebServer 配置信息*******\n");
-    printf("端口:\t%d\n", port);
-    printf("线程数:\t%d\n", threadNumber);
-    printf("根目录:\t%s\n", basePath.c_str());
+    Logger::GetInstance().LogRun("*******CSGuide WebServer 配置信息*******");
+    Logger::GetInstance().LogRun("端口:\t%d", server_conf.port);
+    Logger::GetInstance().LogRun("线程数:\t%d", server_conf.thread_num);
+    Logger::GetInstance().LogRun("根目录:\t%s", server_conf.root.c_str());
+    Logger::GetInstance().LogRun("守护模式:\t%s", server_conf.daemon ? "true" : "false");
   }
-    HandleForSigPipe();
 
-  HttpServer httpServer(basePath, port);
-    httpServer.Run(threadNumber);
+  if (server_conf.daemon) daemon_run();
+
+  HandleForSigPipe();
+
+  HttpServer httpServer(server_conf);
+  httpServer.Run();
 }

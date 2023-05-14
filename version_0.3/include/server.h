@@ -16,32 +16,39 @@ namespace csguide_webserver {
 
 #define BUFFERSIZE 2048
 
+struct ServerConf {
+  int thread_num = 4;
+  int port = 8080;
+  bool daemon = true;
+  std::string root = "./pages/";  // 这是默认目录，也就是当前项目的 pages 子目录
+};
+
 class HttpServer {
 public:
   enum FileState { FILE_OK, FIlE_NOT_FOUND, FILE_FORBIDDEN };
 
 public:
-  HttpServer(const std::string& base_path, int port = 80, const char* ip = nullptr)
-      : base_path_(base_path), serverSocket(port, ip) {
-      serverSocket.Bind();
-      serverSocket.Listen();
+  HttpServer(const ServerConf& server_conf, const char* ip = nullptr)
+      : server_conf_(server_conf), serverSocket(server_conf.port, ip) {
+    serverSocket.Bind();
+    serverSocket.Listen();
   }
 
-  void Run(int thread_num, int max_queue_size = 10000);
+  void Run(int max_queue_size = 10000);
 
   void DoRequest(std::shared_ptr<void> arg);
 
 private:
   void Header(std::shared_ptr<HttpData> http_data);
 
-  FileState StaticFile(std::shared_ptr<HttpData> http_data, const std::string& base_path);
+  FileState StaticFile(std::shared_ptr<HttpData> http_data);
 
   void Send(std::shared_ptr<HttpData> http_data, FileState file_state);
 
   void GetMime(std::shared_ptr<HttpData> http_data);
 
 private:
-  std::string base_path_;
+  const ServerConf& server_conf_;
   ServerSocket serverSocket;
 };
 
