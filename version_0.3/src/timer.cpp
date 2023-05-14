@@ -28,7 +28,7 @@ TimerNode::~TimerNode() {
   // 析构时如果是被deleted 则httpData为NULL,
   // 不用处理，而如果是超时，则需要删除Epoll中的httpDataMap中
   if (httpData_) {
-    auto it = Epoll::http_data_map_.find(httpData_->clientSocket_->fd);
+    auto it = Epoll::http_data_map_.find(httpData_->client_socket_->fd);
     if (it != Epoll::http_data_map_.end()) {
       Epoll::http_data_map_.erase(it);
     }
@@ -54,7 +54,7 @@ void TimerManager::addTimer(std::shared_ptr<HttpData> httpData, size_t timeout) 
     MutexLockGuard guard(lock_);
     TimerQueue.push(timerNode);
     // 将TimerNode和HttpData关联起来
-    httpData->setTimer(timerNode);
+      httpData->SetTimer(timerNode);
   }
 }
 

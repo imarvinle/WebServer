@@ -134,7 +134,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
   while (true) {
     // FIXME 这里也是同样的，由于是非阻塞IO，所以返回-1
     // 也不一定是错误，还需判断error
-    recv_data = recv(sharedHttpData->clientSocket_->fd, buffer + read_index, BUFFERSIZE - read_index, 0);
+    recv_data = recv(sharedHttpData->client_socket_->fd, buffer + read_index, BUFFERSIZE - read_index, 0);
     if (recv_data == -1) {
       if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
         return;  // FIXME 请求不完整该怎么办，继续加定时器吗？还是直接关闭
@@ -150,8 +150,8 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
     }
     read_index += recv_data;
 
-    HttpRequestParser::HTTP_CODE retcode = HttpRequestParser::parse_content(
-        buffer, check_index, read_index, parse_state, start_line, *sharedHttpData->request_);
+    HttpRequestParser::HTTP_CODE retcode = HttpRequestParser::ParseContent(
+            buffer, check_index, read_index, parse_state, start_line, *sharedHttpData->request_);
 
     if (retcode == HttpRequestParser::NO_REQUEST) {
       continue;
@@ -162,11 +162,11 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
       auto it = sharedHttpData->request_->mHeaders.find(HttpRequest::Connection);
       if (it != sharedHttpData->request_->mHeaders.end()) {
         if (it->second == "keep-alive") {
-          sharedHttpData->response_->setKeepAlive(true);
+            sharedHttpData->response_->SetKeepAlive(true);
           // timeout=20s
-          sharedHttpData->response_->addHeader("Keep-Alive", std::string("timeout=20"));
+            sharedHttpData->response_->AddHeader("Keep-Alive", std::string("timeout=20"));
         } else {
-          sharedHttpData->response_->setKeepAlive(false);
+            sharedHttpData->response_->SetKeepAlive(false);
         }
       }
       header(sharedHttpData);
@@ -178,10 +178,10 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
       send(sharedHttpData, fileState);
       // 如果是keep_alive else
       // sharedHttpData将会自动析构释放clientSocket，从而关闭资源
-      if (sharedHttpData->response_->keep_alive()) {
+      if (sharedHttpData->response_->KeepAlive()) {
         // FIXME std::cout << "再次添加定时器  keep_alive: " <<
         // sharedHttpData->clientSocket_->fd << std::endl;
-          Epoll::Modfd(sharedHttpData->epoll_fd, sharedHttpData->clientSocket_->fd, Epoll::DEFAULT_EVENTS,
+          Epoll::Modfd(sharedHttpData->epoll_fd, sharedHttpData->client_socket_->fd, Epoll::DEFAULT_EVENTS,
                        sharedHttpData);
         Epoll::timer_manager_.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
       }
@@ -196,11 +196,11 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
 
 void HttpServer::header(std::shared_ptr<HttpData> httpData) {
   if (httpData->request_->mVersion == HttpRequest::HTTP_11) {
-    httpData->response_->setVersion(HttpRequest::HTTP_11);
+      httpData->response_->SetVersion(HttpRequest::HTTP_11);
   } else {
-    httpData->response_->setVersion(HttpRequest::HTTP_10);
+      httpData->response_->SetVersion(HttpRequest::HTTP_10);
   }
-  httpData->response_->addHeader("Server", "LC WebServer");
+    httpData->response_->AddHeader("Server", "LC WebServer");
 }
 
 // 获取Mime 同时设置path到response
@@ -220,30 +220,30 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
   decltype(Mime_map)::iterator it;
 
   if ((it = Mime_map.find(mime)) != Mime_map.end()) {
-    httpData->response_->setMime(it->second);
+      httpData->response_->SetMime(it->second);
   } else {
-    httpData->response_->setMime(Mime_map.find("default")->second);
+      httpData->response_->SetMime(Mime_map.find("default")->second);
   }
-  httpData->response_->setFilePath(filepath);
+        httpData->response_->SetFilePath(filepath);
 }
 
 HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData, const std::string& base_path) {
   struct stat file_stat;
-  std::string file = base_path + httpData->response_->filePath();
+  std::string file = base_path + httpData->response_->FilePath();
   // 如果是 / 结尾，则默认读取 /index.html
   // 扩展，比如访问，csguide.cn/，则默认读取 csguide.cn/index.html
   if (endsWith(file, "/")) {
     file = file + "index.html";
     // 并且重新设置 mime 为 html
-    httpData->response_->setMime(MimeType("text/html"));
+      httpData->response_->SetMime(MimeType("text/html"));
   }
 
   // 文件不存在
   if (stat(file.c_str(), &file_stat) < 0) {
     // FIXME 设置Mime 为 html
-    httpData->response_->setMime(MimeType("text/html"));
-    httpData->response_->setStatusCode(HttpResponse::k404NotFound);
-    httpData->response_->setStatusMsg("Not Found");
+      httpData->response_->SetMime(MimeType("text/html"));
+      httpData->response_->SetStatusCode(HttpResponse::k404NotFound);
+      httpData->response_->SetStatusMsg("Not Found");
     // 废弃， 404就不需要设置filepath
     // httpData->response_->setFilePath(std::string(base_path_)+"/404.html");
     // std::cout << "File Not Found: " <<   file << std::endl;
@@ -253,18 +253,18 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
   // 不是普通文件或无访问权限
   if (!S_ISREG(file_stat.st_mode)) {
     // FIXME 设置Mime 为 html
-    httpData->response_->setMime(MimeType("text/html"));
-    httpData->response_->setStatusCode(HttpResponse::k403forbiden);
-    httpData->response_->setStatusMsg("ForBidden");
+      httpData->response_->SetMime(MimeType("text/html"));
+      httpData->response_->SetStatusCode(HttpResponse::k403forbiden);
+      httpData->response_->SetStatusMsg("ForBidden");
     // 废弃， 403就不需要设置filepath
     // httpData->response_->setFilePath(std::string(base_path_)+"/403.html");
     std::cout << "not normal file" << std::endl;
     return FILE_FORBIDDEN;
   }
 
-  httpData->response_->setStatusCode(HttpResponse::k200Ok);
-  httpData->response_->setStatusMsg("OK");
-  httpData->response_->setFilePath(file);
+    httpData->response_->SetStatusCode(HttpResponse::k200Ok);
+    httpData->response_->SetStatusMsg("OK");
+    httpData->response_->SetFilePath(file);
   //    std::cout << "文件存在 - ok" << std::endl;
   return FILE_OK;
 }
@@ -274,11 +274,11 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
   bzero(header, '\0');
   const char* internal_error = "Internal Error";
   struct stat file_stat;
-  httpData->response_->appenBuffer(header);
+    httpData->response_->AppenBuffer(header);
   // 404
   if (fileState == FIlE_NOT_FOUND) {
     // 如果是 '/'开头就发送默认页
-    if (httpData->response_->filePath() == std::string("/")) {
+    if (httpData->response_->FilePath() == std::string("/")) {
       // 现在使用测试页面
       sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(INDEX_PAGE));
       sprintf(header, "%s%s", header, INDEX_PAGE);
@@ -286,46 +286,46 @@ void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
       sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(NOT_FOUND_PAGE));
       sprintf(header, "%s%s", header, NOT_FOUND_PAGE);
     }
-    ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
     return;
   }
 
   if (fileState == FILE_FORBIDDEN) {
     sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(FORBIDDEN_PAGE));
     sprintf(header, "%s%s", header, FORBIDDEN_PAGE);
-    ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
     return;
   }
   // 获取文件状态
-  if (stat(httpData->response_->filePath().c_str(), &file_stat) < 0) {
+  if (stat(httpData->response_->FilePath().c_str(), &file_stat) < 0) {
     sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
     sprintf(header, "%s%s", header, internal_error);
-    ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
     return;
   }
 
-  int filefd = ::open(httpData->response_->filePath().c_str(), O_RDONLY);
+  int filefd = ::open(httpData->response_->FilePath().c_str(), O_RDONLY);
   // 内部错误
   if (filefd < 0) {
     std::cout << "打开文件失败" << std::endl;
     sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
     sprintf(header, "%s%s", header, internal_error);
-    ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
     close(filefd);
     return;
   }
 
   sprintf(header, "%sContent-length: %d\r\n\r\n", header, file_stat.st_size);
-  ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+  ::send(httpData->client_socket_->fd, header, strlen(header), 0);
   void* mapbuf = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, filefd, 0);
-  ::send(httpData->clientSocket_->fd, mapbuf, file_stat.st_size, 0);
+  ::send(httpData->client_socket_->fd, mapbuf, file_stat.st_size, 0);
   munmap(mapbuf, file_stat.st_size);
   close(filefd);
   return;
 err:
   sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
   sprintf(header, "%s%s", header, internal_error);
-  ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
+  ::send(httpData->client_socket_->fd, header, strlen(header), 0);
   return;
 }
 

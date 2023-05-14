@@ -106,7 +106,7 @@ void Epoll::HandleConnection(const ServerSocket &serverSocket) {
 
     std::shared_ptr<ClientSocket> sharedClientSocket(new ClientSocket());
     sharedClientSocket.swap(tempClient);
-    sharedHttpData->clientSocket_ = sharedClientSocket;
+    sharedHttpData->client_socket_ = sharedClientSocket;
     sharedHttpData->epoll_fd = serverSocket.epoll_fd;
 
       Addfd(serverSocket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS, sharedHttpData);
@@ -138,7 +138,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::Poll(const ServerSocket &serverSoc
         auto it = http_data_map_.find(fd);
         if (it != http_data_map_.end()) {
           // 将HttpData节点和TimerNode的关联分开，这样HttpData会立即析构，在析构函数内关闭文件描述符等资源
-          it->second->closeTimer();
+            it->second->CloseTimer();
           // httpDataMap.erase(it);
         }
         continue;
@@ -150,7 +150,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::Poll(const ServerSocket &serverSoc
           httpDatas.push_back(it->second);
           // std::cout << "定时器中找到:" << fd << std::endl;
           // 清除定时器 HttpData.closeTimer()
-          it->second->closeTimer();
+            it->second->CloseTimer();
           http_data_map_.erase(it);
         }
       } else {

@@ -58,7 +58,7 @@ bool ThreadPool::append(std::shared_ptr<void> arg, std::function<void(std::share
   //    }
   // 之前是先判断当前队列是否为空，为空才有线程等待在上面，才需要signal
   // 而后发现其实直接signal也没事，因为signal信号就算没有等待在信号上的也没事
-  condition_.notify();
+    condition_.Notify();
   return true;
 }
 
@@ -69,7 +69,7 @@ void ThreadPool::shutdown(bool graceful) {
       std::cout << "has shutdown" << std::endl;
     }
     shutdown_ = graceful ? graceful_mode : immediate_mode;
-    condition_.notifyAll();
+      condition_.NotifyAll();
   }
   for (int i = 0; i < thread_size; i++) {
     if (pthread_join(threads[i], NULL) != 0) {
@@ -96,7 +96,7 @@ void ThreadPool::run() {
       MutexLockGuard guard(this->mutex_);
       // 无任务 且未shutdown 则条件等待, 注意此处应使用while而非if
       while (request_queue.empty() && !shutdown_) {
-        condition_.wait();
+          condition_.Wait();
       }
 
       if ((shutdown_ == immediate_mode) || (shutdown_ == graceful_mode && request_queue.empty())) {

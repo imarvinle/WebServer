@@ -17,11 +17,11 @@ public:
 
   ~MutexLock() { pthread_mutex_destroy(&mutex_); }
 
-  void inline lock() { pthread_mutex_lock(&mutex_); }
+  void inline Lock() { pthread_mutex_lock(&mutex_); }
 
-  void inline unlock() { pthread_mutex_unlock(&mutex_); }
+  void inline Unlock() { pthread_mutex_unlock(&mutex_); }
 
-  pthread_mutex_t *getMutex() { return &mutex_; }
+  pthread_mutex_t *GetMutex() { return &mutex_; }
 
 private:
   pthread_mutex_t mutex_;
@@ -29,9 +29,9 @@ private:
 
 class MutexLockGuard : public Noncopyable {
 public:
-  explicit MutexLockGuard(MutexLock &mutex) : mutex_(mutex) { mutex_.lock(); }
+  explicit MutexLockGuard(MutexLock &mutex) : mutex_(mutex) { mutex_.Lock(); }
 
-  ~MutexLockGuard() { mutex_.unlock(); }
+  ~MutexLockGuard() { mutex_.Unlock(); }
 
 private:
   MutexLock &mutex_;

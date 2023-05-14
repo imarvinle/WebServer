@@ -23,12 +23,14 @@ public:
 public:
   std::shared_ptr<HttpRequest> request_;
   std::shared_ptr<HttpResponse> response_;
-  std::shared_ptr<ClientSocket> clientSocket_;
+  std::shared_ptr<ClientSocket> client_socket_;
   int epoll_fd;
 
-  void closeTimer();
+public:
 
-  void setTimer(std::shared_ptr<TimerNode>);
+  void CloseTimer();
+
+  void SetTimer(std::shared_ptr<TimerNode>);
 
 private:
   std::weak_ptr<TimerNode> timer_;

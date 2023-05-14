@@ -18,11 +18,11 @@ public:
 
   ~Condition() { pthread_cond_destroy(&cond_); }
 
-  void inline wait() { pthread_cond_wait(&cond_, mutex_.getMutex()); }
+  void inline Wait() { pthread_cond_wait(&cond_, mutex_.GetMutex()); }
 
-  void inline notify() { pthread_cond_signal(&cond_); }
+  void inline Notify() { pthread_cond_signal(&cond_); }
 
-  void inline notifyAll() { pthread_cond_broadcast(&cond_); }
+  void inline NotifyAll() { pthread_cond_broadcast(&cond_); }
 
 private:
   MutexLock &mutex_;

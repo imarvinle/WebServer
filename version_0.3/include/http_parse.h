@@ -26,15 +26,15 @@ public:
   enum PARSE_STATE { PARSE_REQUESTLINE = 0, PARSE_HEADER, PARSE_BODY };
   enum HTTP_CODE { NO_REQUEST, GET_REQUEST, BAD_REQUEST, FORBIDDEN_REQUEST, INTERNAL_ERROR, CLOSED_CONNECTION };
 
-  static LINE_STATE parse_line(char *buffer, int &checked_index, int &read_index);
+  static LINE_STATE ParseLine(char *buffer, int &checked_index, int &read_index);
 
-  static HTTP_CODE parse_requestline(char *line, PARSE_STATE &parse_state, HttpRequest &request);
+  static HTTP_CODE ParseRequestline(char *line, PARSE_STATE &parse_state, HttpRequest &request);
 
-  static HTTP_CODE parse_headers(char *line, PARSE_STATE &parse_state, HttpRequest &request);
+  static HTTP_CODE ParseHeaders(char *line, PARSE_STATE &parse_state, HttpRequest &request);
 
-  static HTTP_CODE parse_body(char *body, HttpRequest &request);
+  static HTTP_CODE ParseBody(char *body, HttpRequest &request);
 
-  static HTTP_CODE parse_content(char *buffer, int &check_index, int &read_index, PARSE_STATE &parse_state,
-                                 int &start_line, HttpRequest &request);
+  static HTTP_CODE ParseContent(char *buffer, int &check_index, int &read_index, PARSE_STATE &parse_state,
+                                int &start_line, HttpRequest &request);
 };
 }  // namespace csguide_webserver

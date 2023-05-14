@@ -27,7 +27,7 @@ std::unordered_map<std::string, HttpRequest::HTTP_HEADER> HttpRequest::header_ma
 
 // 解析一行内容, buffer[checked_index, read_index)
 // check_index是需要分析的第一个字符， read_index已经读取数据末尾下一个字符
-HttpRequestParser::LINE_STATE HttpRequestParser::parse_line(char *buffer, int &checked_index, int &read_index) {
+HttpRequestParser::LINE_STATE HttpRequestParser::ParseLine(char *buffer, int &checked_index, int &read_index) {
   char temp;
   for (; checked_index < read_index; checked_index++) {
     temp = buffer[checked_index];
@@ -49,8 +49,8 @@ HttpRequestParser::LINE_STATE HttpRequestParser::parse_line(char *buffer, int &c
 }
 
 // 解析请求行
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_requestline(char *line, PARSE_STATE &parse_state,
-                                                                  HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::ParseRequestline(char *line, PARSE_STATE &parse_state,
+                                                                 HttpRequest &request) {
   char *url = strpbrk(line, " \t");
   if (!url) {
     return BAD_REQUEST;
@@ -107,8 +107,8 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::parse_requestline(char *line, PA
 }
 
 // 分析头部字段
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_headers(char *line, PARSE_STATE &parse_state,
-                                                              HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::ParseHeaders(char *line, PARSE_STATE &parse_state,
+                                                             HttpRequest &request) {
   if (*line == '\0') {
     if (request.mMethod == HttpRequest::GET) {
       return GET_REQUEST;
@@ -141,31 +141,31 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::parse_headers(char *line, PARSE_
 }
 
 // 解析body
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_body(char *body, HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::ParseBody(char *body, HttpRequest &request) {
   request.mContent = body;
   return GET_REQUEST;
 }
 
 // http 请求入口
-HttpRequestParser::HTTP_CODE HttpRequestParser::parse_content(char *buffer, int &check_index, int &read_index,
-                                                              HttpRequestParser::PARSE_STATE &parse_state,
-                                                              int &start_line, HttpRequest &request) {
+HttpRequestParser::HTTP_CODE HttpRequestParser::ParseContent(char *buffer, int &check_index, int &read_index,
+                                                             HttpRequestParser::PARSE_STATE &parse_state,
+                                                             int &start_line, HttpRequest &request) {
   LINE_STATE line_state = LINE_OK;
   HTTP_CODE retcode = NO_REQUEST;
-  while ((line_state = parse_line(buffer, check_index, read_index)) == LINE_OK) {
+  while ((line_state = ParseLine(buffer, check_index, read_index)) == LINE_OK) {
     char *temp = buffer + start_line;  // 这一行在buffer中的起始位置
     start_line = check_index;          // 下一行起始位置
 
     switch (parse_state) {
       case PARSE_REQUESTLINE: {
-        retcode = parse_requestline(temp, parse_state, request);
+        retcode = ParseRequestline(temp, parse_state, request);
         if (retcode == BAD_REQUEST) return BAD_REQUEST;
 
         break;
       }
 
       case PARSE_HEADER: {
-        retcode = parse_headers(temp, parse_state, request);
+        retcode = ParseHeaders(temp, parse_state, request);
         if (retcode == BAD_REQUEST) {
           return BAD_REQUEST;
         } else if (retcode == GET_REQUEST) {
@@ -175,7 +175,7 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::parse_content(char *buffer, int 
       }
 
       case PARSE_BODY: {
-        retcode = parse_body(temp, request);
+        retcode = ParseBody(temp, request);
         if (retcode == GET_REQUEST) {
           return GET_REQUEST;
         }

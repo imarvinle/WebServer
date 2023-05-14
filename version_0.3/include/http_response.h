@@ -28,52 +28,52 @@ public:
   enum HttpStatusCode { Unknow, k200Ok = 200, k403forbiden = 403, k404NotFound = 404 };
 
   explicit HttpResponse(bool mkeep = true)
-      : mStatusCode(Unknow), keep_alive_(mkeep), mMime("text/html"), mBody(nullptr), mVersion(HttpRequest::HTTP_11) {}
+      : status_code_(Unknow), keep_alive_(mkeep), mime_("text/html"), body_buufer(nullptr), version_(HttpRequest::HTTP_11) {}
 
-  void setStatusCode(HttpStatusCode code) { mStatusCode = code; }
+  void SetStatusCode(HttpStatusCode code) { status_code_ = code; }
 
-  void setBody(const char *buf) { mBody = buf; }
+  void SetBody(const char *buf) { body_buufer = buf; }
 
-  void setContentLength(int len) { mContentLength = len; }
+  void SetContentLength(int len) { content_length_ = len; }
 
-  void setVersion(const HttpRequest::HTTP_VERSION &version) { mVersion = version; }
+  void SetVersion(const HttpRequest::HTTP_VERSION &version) { version_ = version; }
 
-  void setStatusMsg(const std::string &msg) { mStatusMsg = msg; }
+  void SetStatusMsg(const std::string &msg) { status_msg_ = msg; }
 
-  void setFilePath(const std::string &path) { mFilePath = path; }
+  void SetFilePath(const std::string &path) { file_path_ = path; }
 
-  void setMime(const MimeType &mime) { mMime = mime; }
+  void SetMime(const MimeType &mime) { mime_ = mime; }
 
-  void setKeepAlive(bool isalive) { keep_alive_ = isalive; }
+  void SetKeepAlive(bool isalive) { keep_alive_ = isalive; }
 
-  void addHeader(const std::string &key, const std::string &value) { mHeaders[key] = value; }
+  void AddHeader(const std::string &key, const std::string &value) { headers_[key] = value; }
 
-  bool keep_alive() const { return keep_alive_; }
+  bool KeepAlive() const { return keep_alive_; }
 
-  const HttpRequest::HTTP_VERSION version() const { return mVersion; }
+  const HttpRequest::HTTP_VERSION Version() const { return version_; }
 
-  const std::string &filePath() const { return mFilePath; }
+  const std::string &FilePath() const { return file_path_; }
 
-  HttpStatusCode statusCode() const { return mStatusCode; }
+  HttpStatusCode StatusCode() const { return status_code_; }
 
-  const std::string &statusMsg() const { return mStatusMsg; }
+  const std::string &StatusMsg() const { return status_msg_; }
 
-  void appenBuffer(char *) const;
+  void AppenBuffer(char *) const;
 
   ~HttpResponse() {
-    if (mBody != nullptr) delete[] mBody;
+    if (body_buufer != nullptr) delete[] body_buufer;
   }
 
 private:
-  HttpStatusCode mStatusCode;
-  HttpRequest::HTTP_VERSION mVersion;
-  std::string mStatusMsg;
+  HttpStatusCode status_code_;
+  HttpRequest::HTTP_VERSION version_;
+  std::string status_msg_;
   bool keep_alive_;
-  MimeType mMime;
-  const char *mBody;
-  int mContentLength;
-  std::string mFilePath;
-  std::unordered_map<std::string, std::string> mHeaders;
+  MimeType mime_;
+  const char *body_buufer;
+  int content_length_;
+  std::string file_path_;
+  std::unordered_map<std::string, std::string> headers_;
 };
 
 }  // namespace csguide_webserver

@@ -31,18 +31,18 @@ std::unordered_map<std::string, MimeType> Mime_map = {{".html", "text/html"},
                                                       {"", "text/plain"},
                                                       {"default", "text/plain"}};
 
-void HttpResponse::appenBuffer(char *buffer) const {
+void HttpResponse::AppenBuffer(char *buffer) const {
   // 版本
-  if (mVersion == HttpRequest::HTTP_11) {
-    sprintf(buffer, "HTTP/1.1 %d %s\r\n", mStatusCode, mStatusMsg.c_str());
+  if (version_ == HttpRequest::HTTP_11) {
+    sprintf(buffer, "HTTP/1.1 %d %s\r\n", status_code_, status_msg_.c_str());
   } else {
-    sprintf(buffer, "HTTP/1.0 %d %s\r\n", mStatusCode, mStatusMsg.c_str());
+    sprintf(buffer, "HTTP/1.0 %d %s\r\n", status_code_, status_msg_.c_str());
   }
   // 头部字段
-  for (auto it = mHeaders.begin(); it != mHeaders.end(); it++) {
+  for (auto it = headers_.begin(); it != headers_.end(); it++) {
     sprintf(buffer, "%s%s: %s\r\n", buffer, it->first.c_str(), it->second.c_str());
   }
-  sprintf(buffer, "%sContent-type: %s\r\n", buffer, mMime.type.c_str());
+  sprintf(buffer, "%sContent-type: %s\r\n", buffer, mime_.type.c_str());
   // keep_alive
   if (keep_alive_) {
     sprintf(buffer, "%sConnection: keep-alive\r\n", buffer);
