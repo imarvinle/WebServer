@@ -15,8 +15,11 @@
 
 namespace csguide_webserver {
 
+// 全局静态变量初始化
 std::unordered_map<int, std::shared_ptr<HttpData>> Epoll::http_data_map_;
+
 const int Epoll::MAX_EVENTS = 10000;
+
 epoll_event *Epoll::events_;
 
 // 可读 | ET模 | 保证一个socket连接在任一时刻只被一个线程处理
@@ -34,12 +37,12 @@ int Epoll::Init(int max_events) {
   return epoll_fd;
 }
 
-int Epoll::Addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>) {
+int Epoll::Addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData> http_data) {
   epoll_event event;
   event.events = (EPOLLIN | EPOLLET);
   event.data.fd = fd;
   // 增加httpDataMap
-  http_data_map_[fd] = httpData;
+  http_data_map_[fd] = http_data;
   int ret = ::epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event);
   if (ret < 0) {
     std::cout << "epoll add error" << endl;
@@ -50,12 +53,12 @@ int Epoll::Addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpDa
   return 0;
 }
 
-int Epoll::Modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>) {
+int Epoll::Modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData> http_data) {
   epoll_event event;
   event.events = events;
   event.data.fd = fd;
   // 每次更改的时候也更新 httpDataMap
-  http_data_map_[fd] = httpData;
+  http_data_map_[fd] = http_data;
   int ret = ::epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &event);
   if (ret < 0) {
     std::cout << "epoll mod error" << endl;
@@ -82,12 +85,12 @@ int Epoll::Delfd(int epoll_fd, int fd, __uint32_t events) {
   return 0;
 }
 
-void Epoll::HandleConnection(const ServerSocket &serverSocket) {
+void Epoll::HandleConnection(const ServerSocket &server_socket) {
   std::shared_ptr<ClientSocket> tempClient(new ClientSocket);
   // epoll 是ET模式，循环接收连接
   // 需要将listen_fd设置为non-blocking
 
-  while (serverSocket.accept(*tempClient) > 0) {
+  while (server_socket.accept(*tempClient) > 0) {
     // 设置非阻塞
     int ret = setnonblocking(tempClient->fd);
     if (ret < 0) {
@@ -108,15 +111,14 @@ void Epoll::HandleConnection(const ServerSocket &serverSocket) {
     sharedClientSocket.swap(tempClient);
     sharedHttpData->client_socket_ = sharedClientSocket;
     sharedHttpData->epoll_fd = serverSocket.epoll_fd;
-
-      Addfd(serverSocket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS, sharedHttpData);
+    Addfd(server_socket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS, sharedHttpData);
     // FIXME 默认超时时间5 秒测试添加定时器
     timer_manager_.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
   }
 }
 
-std::vector<std::shared_ptr<HttpData>> Epoll::Poll(const ServerSocket &serverSocket, int max_event, int timeout) {
-  int event_num = epoll_wait(serverSocket.epoll_fd, events_, max_event, timeout);
+std::vector<std::shared_ptr<HttpData>> Epoll::Poll(const ServerSocket &server_socket, int max_event, int timeout) {
+  int event_num = epoll_wait(server_socket.epoll_fd, events_, max_event, timeout);
   if (event_num < 0) {
     std::cout << "epoll_num=" << event_num << std::endl;
     std::cout << "epoll_wait error" << std::endl;
@@ -130,8 +132,8 @@ std::vector<std::shared_ptr<HttpData>> Epoll::Poll(const ServerSocket &serverSoc
     int fd = events_[i].data.fd;
 
     // 监听描述符
-    if (fd == serverSocket.listen_fd) {
-        HandleConnection(serverSocket);
+    if (fd == server_socket.listen_fd) {
+        HandleConnection(server_socket);
     } else {
       // 出错的描述符，移除定时器， 关闭文件描述符
       if ((events_[i].events & EPOLLERR) || (events_[i].events & EPOLLRDHUP) || (events_[i].events & EPOLLHUP)) {
