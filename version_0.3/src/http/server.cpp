@@ -217,12 +217,12 @@ void HttpServer::GetMime(std::shared_ptr<HttpData> http_data) {
   if (filepath.rfind('.') != std::string::npos) {
     mime = filepath.substr(filepath.rfind('.'));
   }
-  decltype(Mime_map)::iterator it;
+  decltype(MimeMap)::iterator it;
 
-  if ((it = Mime_map.find(mime)) != Mime_map.end()) {
+  if ((it = MimeMap.find(mime)) != MimeMap.end()) {
       http_data->response_->SetMime(it->second);
   } else {
-      http_data->response_->SetMime(Mime_map.find("default")->second);
+      http_data->response_->SetMime(MimeMap.find("default")->second);
   }
         http_data->response_->SetFilePath(filepath);
 }

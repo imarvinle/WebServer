@@ -21,7 +21,7 @@ struct MimeType {
   std::string type;
 };
 
-extern std::unordered_map<std::string, MimeType> Mime_map;
+extern std::unordered_map<std::string, MimeType> MimeMap;
 
 class HttpResponse {
 public:
