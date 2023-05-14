@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
@@ -11,6 +11,8 @@
 #include "HttpResponse.h"
 #include "Socket.h"
 #include "Timer.h"
+
+namespace csguide_webserver {
 
 class TimerNode;
 
@@ -32,4 +34,4 @@ class HttpData : public std::enable_shared_from_this<HttpData> {
   std::weak_ptr<TimerNode> timer_;
 };
 
-//#endif //WEBSERVER_HTTPDATA_H
+}  // namespace csguide_webserver

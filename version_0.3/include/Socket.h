@@ -13,6 +13,8 @@
 #include <iostream>
 #include <memory>
 
+namespace csguide_webserver {
+
 class ClientSocket;
 
 void setReusePort(int fd);
@@ -51,3 +53,4 @@ class ClientSocket {
   sockaddr_in mAddr;
   int fd;
 };
+}  // namespace csguide_webserver

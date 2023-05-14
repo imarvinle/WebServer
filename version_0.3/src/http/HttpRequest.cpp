@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #include "../../include/HttpRequest.h"
+
+namespace csguide_webserver {
 
 // 重载HttpRequest <<
 std::ostream &operator<<(std::ostream &os, const HttpRequest &request) {
@@ -16,3 +18,5 @@ std::ostream &operator<<(std::ostream &os, const HttpRequest &request) {
   }
   return os;
 }
+
+}  // namespace csguide_webserver

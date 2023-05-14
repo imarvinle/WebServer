@@ -1,9 +1,7 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
-#include "../include/Util.h"
 
 #include <fcntl.h>
 #include <signal.h>
@@ -12,6 +10,10 @@
 
 #include <cstring>
 #include <string>
+
+#include "../include/Util.h"
+
+namespace csguide_webserver {
 
 std::string &ltrim(std::string &str) {
   if (str.empty()) {
@@ -73,3 +75,5 @@ bool endsWith(std::string const &str, std::string const &suffix) {
   }
   return str.rfind(suffix) == str.size() - suffix.size();
 }
+
+}  // namespace csguide_webserver

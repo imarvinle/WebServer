@@ -1,11 +1,13 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
+
+#include <string>
 
 #include "../../include/HttpResponse.h"
 
-#include <string>
+namespace csguide_webserver {
 
 std::unordered_map<std::string, MimeType> Mime_map = {
     {".html", "text/html"},
@@ -50,3 +52,5 @@ void HttpResponse::appenBuffer(char *buffer) const {
     sprintf(buffer, "%sConnection: close\r\n", buffer);
   }
 }
+
+}  // namespace csguide_webserver

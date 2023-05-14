@@ -1,10 +1,8 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
-//#ifndef WEBSERVER_SERVER_H
-//#define WEBSERVER_SERVER_H
 #pragma once
 
 #include <memory>
@@ -14,6 +12,8 @@
 #include "HttpResponse.h"
 #include "Socket.h"
 
+namespace csguide_webserver {
+
 #define BUFFERSIZE 2048
 
 class HttpServer {
@@ -21,8 +21,9 @@ class HttpServer {
   enum FileState { FILE_OK, FIlE_NOT_FOUND, FILE_FORBIDDEN };
 
   public:
-  explicit HttpServer(int port = 80, const char* ip = nullptr)
-      : serverSocket(port, ip) {
+  HttpServer(const std::string& base_path, int port = 80,
+             const char* ip = nullptr)
+      : base_path_(base_path), serverSocket(port, ip) {
     serverSocket.bind();
     serverSocket.listen();
   }
@@ -42,7 +43,9 @@ class HttpServer {
   void getMime(std::shared_ptr<HttpData>);
   void hanleIndex();
 
+  private:
+  std::string base_path_;
   ServerSocket serverSocket;
 };
 
-//#endif //WEBSERVER_SERVER_H
+}  // namespace csguide_webserver

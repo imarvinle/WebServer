@@ -1,14 +1,15 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
-#include "../include/Socket.h"
 
 #include <cstdio>
 #include <cstring>
 
+#include "../include/Socket.h"
 #include "../include/Util.h"
+
+namespace csguide_webserver {
 
 void setReusePort(int fd) {
   int opt = 1;
@@ -94,3 +95,5 @@ void ClientSocket::close() {
   }
 }
 ClientSocket::~ClientSocket() { close(); }
+
+}  // namespace csguide_webserver

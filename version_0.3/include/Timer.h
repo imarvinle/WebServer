@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
@@ -11,6 +11,8 @@
 
 #include "HttpData.h"
 #include "MutexLock.h"
+
+namespace csguide_webserver {
 
 class HttpData;
 
@@ -68,3 +70,4 @@ class TimerManager {
   MutexLock lock_;
 };
 
+}  // namespace csguide_webserver

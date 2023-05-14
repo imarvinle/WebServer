@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
@@ -15,6 +15,8 @@
 #include "HttpData.h"
 #include "Socket.h"
 #include "Timer.h"
+
+namespace csguide_webserver {
 
 class Epoll {
   public:
@@ -40,5 +42,4 @@ class Epoll {
   static TimerManager timerManager;
   const static __uint32_t DEFAULT_EVENTS;
 };
-
-//#endif //WEBSERVER_EPOLL_H
+}  // namespace csguide_webserver

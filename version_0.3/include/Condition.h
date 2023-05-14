@@ -1,8 +1,7 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
 
 #pragma once
 
@@ -10,6 +9,8 @@
 
 #include "MutexLock.h"
 #include "noncopyable.h"
+
+namespace csguide_webserver {
 
 class Condition : public noncopyable {
   public:
@@ -28,3 +29,4 @@ class Condition : public noncopyable {
   MutexLock &mutex_;
   pthread_cond_t cond_;
 };
+}  // namespace csguide_webserver

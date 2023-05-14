@@ -1,14 +1,16 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
-#include "../include/ThreadPool.h"
 
 #include <pthread.h>
 #include <sys/prctl.h>
 
 #include <iostream>
+
+#include "../include/ThreadPool.h"
+
+namespace csguide_webserver {
 
 ThreadPool::ThreadPool(int thread_s, int max_queue_s)
     : max_queue_size(max_queue_s),
@@ -113,3 +115,4 @@ void ThreadPool::run() {
     requestTask.process(requestTask.arg);
   }
 }
+}  // namespace csguide_webserver

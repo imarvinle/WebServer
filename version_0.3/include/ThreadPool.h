@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
@@ -15,6 +15,8 @@
 #include "Condition.h"
 #include "MutexLock.h"
 #include "noncopyable.h"
+
+namespace csguide_webserver {
 
 const int MAX_THREAD_SIZE = 1024;
 const int MAX_QUEUE_SIZE = 10000;
@@ -57,3 +59,4 @@ class ThreadPool {
   std::list<ThreadTask> request_queue;
 };
 
+}  // namespace csguide_webserver

@@ -1,9 +1,7 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
-#include "../../include/Server.h"
 
 #include <fcntl.h>
 #include <sys/epoll.h>
@@ -22,8 +20,11 @@
 #include "../../include/HttpData.h"
 #include "../../include/HttpParse.h"
 #include "../../include/HttpResponse.h"
+#include "../../include/Server.h"
 #include "../../include/ThreadPool.h"
 #include "../../include/Util.h"
+
+namespace csguide_webserver {
 
 char NOT_FOUND_PAGE[] =
     "<html>\n"
@@ -70,8 +71,6 @@ char INDEX_PAGE[] =
     "</html>";
 
 char TEST[] = "HELLO WORLD";
-
-extern std::string basePath;
 
 void HttpServer::run(int thread_num, int max_queque_size) {
   ThreadPool threadPool(thread_num, max_queque_size);
@@ -183,7 +182,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
       // FIXME 之前测试时写死的了文件路径导致上服务器出错
       // static_file(sharedHttpData,
       // "/Users/lichunlin/CLionProjects/webserver/version_0.1");
-      FileState fileState = static_file(sharedHttpData, basePath);
+      FileState fileState = static_file(sharedHttpData, base_path_);
       send(sharedHttpData, fileState);
       // 如果是keep_alive else
       // sharedHttpData将会自动析构释放clientSocket，从而关闭资源
@@ -257,7 +256,7 @@ HttpServer::FileState HttpServer::static_file(
     httpData->response_->setStatusCode(HttpResponse::k404NotFound);
     httpData->response_->setStatusMsg("Not Found");
     // 废弃， 404就不需要设置filepath
-    // httpData->response_->setFilePath(std::string(basepath)+"/404.html");
+    // httpData->response_->setFilePath(std::string(base_path_)+"/404.html");
     // std::cout << "File Not Found: " <<   file << std::endl;
     return FIlE_NOT_FOUND;
   }
@@ -269,7 +268,7 @@ HttpServer::FileState HttpServer::static_file(
     httpData->response_->setStatusCode(HttpResponse::k403forbiden);
     httpData->response_->setStatusMsg("ForBidden");
     // 废弃， 403就不需要设置filepath
-    // httpData->response_->setFilePath(std::string(basepath)+"/403.html");
+    // httpData->response_->setFilePath(std::string(base_path_)+"/403.html");
     std::cout << "not normal file" << std::endl;
     return FILE_FORBIDDEN;
   }
@@ -347,3 +346,5 @@ err:
   ::send(httpData->clientSocket_->fd, header, strlen(header), 0);
   return;
 }
+
+}  // namespace csguide_webserver

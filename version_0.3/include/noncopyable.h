@@ -1,13 +1,11 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
 
-//#ifndef WEBSERVER_NONCOPYABLE_H
-//#define WEBSERVER_NONCOPYABLE_H
-
+namespace csguide_webserver {
 class noncopyable {
   public:
   noncopyable(const noncopyable&) = delete;
@@ -17,4 +15,4 @@ class noncopyable {
   noncopyable() = default;
   ~noncopyable() = default;
 };
-//#endif //WEBSERVER_NONCOPYABLE_H
+}  // namespace csguide_webserver

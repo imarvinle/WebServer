@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
@@ -10,6 +10,8 @@
 #include <unordered_map>
 
 #include "HttpRequest.h"
+
+namespace csguide_webserver {
 
 struct MimeType {
   MimeType(const std::string &str) : type(str){};
@@ -87,4 +89,4 @@ class HttpResponse {
   std::unordered_map<std::string, std::string> mHeaders;
 };
 
-//#endif //WEBSERVER_HTTPRESPONSE_H
+}  // namespace csguide_webserver

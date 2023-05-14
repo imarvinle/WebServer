@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #include <dirent.h>
@@ -17,6 +17,8 @@
 
 #include "../include/Server.h"
 #include "../include/Util.h"
+
+using namespace csguide_webserver;
 
 // 这是默认目录，也就是当前项目的 pages 子目录
 std::string basePath = "./pages/";  //
@@ -112,6 +114,6 @@ int main(int argc, char **argv) {
   }
   handle_for_sigpipe();
 
-  HttpServer httpServer(port);
+  HttpServer httpServer(basePath, port);
   httpServer.run(threadNumber);
 }

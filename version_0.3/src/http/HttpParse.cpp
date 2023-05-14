@@ -1,17 +1,18 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
-#include "../../include/HttpParse.h"
 
 #include <string.h>
 
 #include <algorithm>
 #include <iostream>
 
+#include "../../include/HttpParse.h"
 #include "../../include/HttpRequest.h"
 #include "../../include/Util.h"
+
+namespace csguide_webserver {
 
 std::unordered_map<std::string, HttpRequest::HTTP_HEADER>
     HttpRequest::header_map = {
@@ -196,3 +197,4 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::parse_content(
     return BAD_REQUEST;
   }
 }
+}  // namespace csguide_webserver

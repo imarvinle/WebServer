@@ -1,14 +1,15 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
 
 #pragma once
 
 #include <pthread.h>
 
 #include "noncopyable.h"
+
+namespace csguide_webserver {
 
 class MutexLock : public noncopyable {
   public:
@@ -31,5 +32,4 @@ class MutexLockGuard : public noncopyable {
   private:
   MutexLock &mutex_;
 };
-
-//#endif //WEBSERVER_MUTEXLOCK_H
+}  // namespace csguide_webserver

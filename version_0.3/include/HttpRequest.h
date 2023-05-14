@@ -1,12 +1,14 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
 
 #include <iostream>
 #include <unordered_map>
+
+namespace csguide_webserver {
 
 class HttpRequest;
 
@@ -54,4 +56,4 @@ struct HttpRequest {
   std::unordered_map<HTTP_HEADER, std::string, EnumClassHash> mHeaders;
 };
 
-//#endif //WEBSERVER_HTTPREQUEST_H
+}  // namespace csguide_webserver

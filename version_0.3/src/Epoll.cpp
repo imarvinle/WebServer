@@ -1,9 +1,7 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
-#include "../include/Epoll.h"
 
 #include <sys/epoll.h>
 
@@ -11,7 +9,10 @@
 #include <iostream>
 #include <vector>
 
+#include "../include/Epoll.h"
 #include "../include/Util.h"
+
+namespace csguide_webserver {
 
 std::unordered_map<int, std::shared_ptr<HttpData>> Epoll::httpDataMap;
 const int Epoll::MAX_EVENTS = 10000;
@@ -167,3 +168,5 @@ std::vector<std::shared_ptr<HttpData>> Epoll::poll(
   }
   return httpDatas;
 }
+
+}  // namespace csguide_webserver

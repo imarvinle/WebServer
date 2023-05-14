@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
 
 #pragma once
@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+
+namespace csguide_webserver {
 
 #define CR '\r'
 #define LF '\n'
@@ -46,5 +48,4 @@ class HttpRequestParser {
                                  int &read_index, PARSE_STATE &parse_state,
                                  int &start_line, HttpRequest &request);
 };
-
-//#endif //WEBSERVER_HTTPPARSE_H
+}  // namespace csguide_webserver

@@ -1,14 +1,15 @@
 /*
  * Copyright (C) 2019 CSGuide(https://csguide.cn)
- * Author: xiaobei (https://github.com/imarvinle) 
+ * Author: xiaobei (https://github.com/imarvinle)
  */
-
-#include "../include/Timer.h"
 
 #include <sys/time.h>
 #include <unistd.h>
 
 #include "../include/Epoll.h"
+#include "../include/Timer.h"
+
+namespace csguide_webserver {
 
 size_t TimerNode::current_msec = 0;  // 当前时间
 
@@ -76,3 +77,5 @@ void TimerManager::handle_expired_event() {
     }
   }
 }
+
+}  // namespace csguide_webserver
