@@ -1,9 +1,10 @@
 # idea files
 cmake-build-debug
 .*/
-
-
-
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
 # Object files
 *.o
 *.ko
@@ -30,3 +31,5 @@ cmake-build-debug
 *.i*86
 *.x86_64
 *.hex
+webserver
+cmake_install.cmake
