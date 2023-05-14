@@ -1,7 +1,7 @@
-//
-// Created by marvinle on 2019/2/1 10:57 AM.
-//
-
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 #ifndef WEBSERVER_HTTPPARSE_H
 #define WEBSERVER_HTTPPARSE_H
 

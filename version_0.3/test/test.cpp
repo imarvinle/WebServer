@@ -1,6 +1,7 @@
-//
-// Created by marvinle on 2019/2/3 9:13 AM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #include <dirent.h>
 #include <stdio.h>

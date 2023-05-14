@@ -1,9 +1,7 @@
-//
-// Created by marvinle on 2019/2/1 12:07 PM.
-//
-
-//#ifndef WEBSERVER_UTILS_H
-//#define WEBSERVER_UTILS_H
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle)
+ */
 
 #pragma once
 
@@ -23,5 +21,3 @@ void handle_for_sigpipe();
 int check_base_path(char *basePath);
 
 bool endsWith(std::string const &str, std::string const &suffix);
-
-//#endif //WEBSERVER_UTILS_H

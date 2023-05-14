@@ -1,9 +1,9 @@
-//
-// Created by marvinle on 2019/2/25 8:49 PM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
-//#ifndef WEBSERVER_CONDITION_H
-//#define WEBSERVER_CONDITION_H
+
 #pragma once
 
 #include <pthread.h>
@@ -28,5 +28,3 @@ class Condition : public noncopyable {
   MutexLock &mutex_;
   pthread_cond_t cond_;
 };
-
-//#endif //WEBSERVER_CONDITION_H

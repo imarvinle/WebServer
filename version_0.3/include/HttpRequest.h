@@ -1,9 +1,8 @@
-//
-// Created by marvinle on 2019/2/26 6:36 PM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
-//#ifndef WEBSERVER_HTTPREQUEST_H
-//#define WEBSERVER_HTTPREQUEST_H
 #pragma once
 
 #include <iostream>

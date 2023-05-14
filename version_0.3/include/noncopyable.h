@@ -1,6 +1,7 @@
-//
-// Created by marvinle on 2019/2/25 3:29 PM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #pragma once
 

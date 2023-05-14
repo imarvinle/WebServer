@@ -1,7 +1,7 @@
-//
-// Created by marvinle on 2019/2/1 4:21 PM.
-//
-
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 #include "../include/ssocket.h"
 
 void nsocket::setReusePort(int fd) {

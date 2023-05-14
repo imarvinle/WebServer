@@ -1,6 +1,7 @@
-//
-// Created by marvinle on 2019/2/25 11:26 PM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #ifndef WEBSERVER_THREADPOLL_H
 #define WEBSERVER_THREADPOLL_H

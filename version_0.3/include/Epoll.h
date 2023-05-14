@@ -1,9 +1,8 @@
-//
-// Created by marvinle on 2019/2/26 5:11 PM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
-//#ifndef WEBSERVER_EPOLL_H
-//#define WEBSERVER_EPOLL_H
 #pragma once
 
 #include <sys/epoll.h>

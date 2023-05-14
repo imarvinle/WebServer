@@ -1,6 +1,7 @@
-//
-// Created by marvinle on 2019/2/26 8:08 PM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #include "../include/Epoll.h"
 

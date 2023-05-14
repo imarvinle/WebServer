@@ -1,7 +1,7 @@
-//
-// Created by marvinle on 2019/2/1 12:07 PM.
-//
-
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 #ifndef WEBSERVER_UTILS_H
 #define WEBSERVER_UTILS_H
 

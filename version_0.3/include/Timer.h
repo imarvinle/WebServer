@@ -1,8 +1,7 @@
-//
-// Created by marvinle on 2019/2/26 3:19 PM.
-//
-//#ifndef WEBSERVER_TIMER_H
-//#define WEBSERVER_TIMER_H
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #pragma once
 
@@ -69,4 +68,3 @@ class TimerManager {
   MutexLock lock_;
 };
 
-//#endif //WEBSERVER_TIMER_H

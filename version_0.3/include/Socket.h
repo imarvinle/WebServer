@@ -1,9 +1,7 @@
-//
-// Created by marvinle on 2019/2/1 3:50 PM.
-//
-
-//#ifndef WEBSERVER_SOCKET_H
-//#define WEBSERVER_SOCKET_H
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle)
+ */
 
 #pragma once
 
@@ -53,4 +51,3 @@ class ClientSocket {
   sockaddr_in mAddr;
   int fd;
 };
-//#endif //WEBSERVER_SOCKET_H

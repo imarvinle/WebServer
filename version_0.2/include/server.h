@@ -1,6 +1,7 @@
-//
-// Created by marvinle on 2019/2/1 2:54 PM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #ifndef WEBSERVER_SERVER_H
 #define WEBSERVER_SERVER_H

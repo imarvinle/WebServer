@@ -1,9 +1,7 @@
-//
-// Created by marvinle on 2019/2/25 11:26 PM.
-//
-
-//#ifndef WEBSERVER_THREADPOLL_H
-//#define WEBSERVER_THREADPOLL_H
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #pragma once
 
@@ -59,4 +57,3 @@ class ThreadPool {
   std::list<ThreadTask> request_queue;
 };
 
-//#endif //WEBSERVER_THREADPOLL_H

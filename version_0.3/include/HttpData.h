@@ -1,8 +1,7 @@
-//
-// Created by marvinle on 2019/2/26 2:39 PM.
-//
-//#ifndef WEBSERVER_HTTPDATA_H
-//#define WEBSERVER_HTTPDATA_H
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
 
 #pragma once
 

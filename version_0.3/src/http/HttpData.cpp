@@ -1,6 +1,8 @@
-//
-// Created by marvinle on 2019/2/27 10:19 AM.
-//
+/*
+ * Copyright (C) 2019 CSGuide(https://csguide.cn)
+ * Author: xiaobei (https://github.com/imarvinle) 
+ */
+
 
 #include "../../include/HttpData.h"
 
