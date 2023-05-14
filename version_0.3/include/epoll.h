@@ -19,19 +19,19 @@
 namespace csguide_webserver {
 
 class Epoll {
-  
+
 public:
   static int Init(int max_events);
 
-  static int Addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>);
+  static int Addfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData> http_data);
 
-  static int Modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData>);
+  static int Modfd(int epoll_fd, int fd, __uint32_t events, std::shared_ptr<HttpData> http_data);
 
   static int Delfd(int epoll_fd, int fd, __uint32_t events);
 
-  static std::vector<std::shared_ptr<HttpData>> Poll(const ServerSocket &serverSocket, int max_event, int timeout);
+  static std::vector<std::shared_ptr<HttpData>> Poll(const ServerSocket &server_socket, int max_event, int timeout);
 
-  static void HandleConnection(const ServerSocket &serverSocket);
+  static void HandleConnection(const ServerSocket &server_socket);
 
 public:
   static std::unordered_map<int, std::shared_ptr<HttpData>> http_data_map_;
