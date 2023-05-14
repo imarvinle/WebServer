@@ -90,9 +90,9 @@ void Epoll::HandleConnection(const ServerSocket &server_socket) {
   // epoll 是ET模式，循环接收连接
   // 需要将listen_fd设置为non-blocking
 
-  while (server_socket.accept(*tempClient) > 0) {
+  while (server_socket.Accept(*tempClient) > 0) {
     // 设置非阻塞
-    int ret = setnonblocking(tempClient->fd);
+    int ret = SetNonBlocking(tempClient->fd_);
     if (ret < 0) {
       std::cout << "setnonblocking error" << std::endl;
       tempClient->close();
@@ -110,15 +110,15 @@ void Epoll::HandleConnection(const ServerSocket &server_socket) {
     std::shared_ptr<ClientSocket> sharedClientSocket(new ClientSocket());
     sharedClientSocket.swap(tempClient);
     sharedHttpData->client_socket_ = sharedClientSocket;
-    sharedHttpData->epoll_fd = server_socket.epoll_fd;
-    Addfd(server_socket.epoll_fd, sharedClientSocket->fd, DEFAULT_EVENTS, sharedHttpData);
+    sharedHttpData->epoll_fd = server_socket.epoll_fd_;
+    Addfd(server_socket.epoll_fd_, sharedClientSocket->fd_, DEFAULT_EVENTS, sharedHttpData);
     // FIXME 默认超时时间5 秒测试添加定时器
     timer_manager_.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
   }
 }
 
 std::vector<std::shared_ptr<HttpData>> Epoll::Poll(const ServerSocket &server_socket, int max_event, int timeout) {
-  int event_num = epoll_wait(server_socket.epoll_fd, events_, max_event, timeout);
+  int event_num = epoll_wait(server_socket.epoll_fd_, events_, max_event, timeout);
   if (event_num < 0) {
     std::cout << "epoll_num=" << event_num << std::endl;
     std::cout << "epoll_wait error" << std::endl;
@@ -132,7 +132,7 @@ std::vector<std::shared_ptr<HttpData>> Epoll::Poll(const ServerSocket &server_so
     int fd = events_[i].data.fd;
 
     // 监听描述符
-    if (fd == server_socket.listen_fd) {
+    if (fd == server_socket.listen_fd_) {
         HandleConnection(server_socket);
     } else {
       // 出错的描述符，移除定时器， 关闭文件描述符

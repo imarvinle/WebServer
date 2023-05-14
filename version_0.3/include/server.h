@@ -23,23 +23,22 @@ public:
 public:
   HttpServer(const std::string& base_path, int port = 80, const char* ip = nullptr)
       : base_path_(base_path), serverSocket(port, ip) {
-    serverSocket.bind();
-    serverSocket.listen();
+      serverSocket.Bind();
+      serverSocket.Listen();
   }
 
-  void run(int, int max_queue_size = 10000);
+  void Run(int, int max_queue_size = 10000);
 
-  void do_request(std::shared_ptr<void> arg);
+  void DoRequest(std::shared_ptr<void> arg);
 
 private:
-  void header(std::shared_ptr<HttpData>);
+  void Header(std::shared_ptr<HttpData>);
 
-  FileState static_file(std::shared_ptr<HttpData>, const std::string& base_path);
+  FileState StaticFile(std::shared_ptr<HttpData>, const std::string& base_path);
 
-  void send(std::shared_ptr<HttpData>, FileState);
+  void Send(std::shared_ptr<HttpData>, FileState);
 
-  void getMime(std::shared_ptr<HttpData>);
-  void hanleIndex();
+  void GetMime(std::shared_ptr<HttpData>);
 
 private:
   std::string base_path_;

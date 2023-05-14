@@ -16,7 +16,7 @@
 
 namespace csguide_webserver {
 
-std::string &ltrim(std::string &str) {
+std::string &Ltrim(std::string &str) {
   if (str.empty()) {
     return str;
   }
@@ -25,7 +25,7 @@ std::string &ltrim(std::string &str) {
   return str;
 }
 
-std::string &rtrim(std::string &str) {
+std::string &Rtrim(std::string &str) {
   if (str.empty()) {
     return str;
   }
@@ -33,24 +33,24 @@ std::string &rtrim(std::string &str) {
   return str;
 }
 
-std::string &trim(std::string &str) {
+std::string &Trim(std::string &str) {
   if (str.empty()) {
     return str;
   }
 
-  ltrim(str);
-  rtrim(str);
+    Ltrim(str);
+    Rtrim(str);
   return str;
 }
 
-int setnonblocking(int fd) {
+int SetNonBlocking(int fd) {
   int old_option = fcntl(fd, F_GETFL);
   int new_option = old_option | O_NONBLOCK;
   fcntl(fd, F_SETFL, new_option);
   return old_option;
 }
 
-void handle_for_sigpipe() {
+void HandleForSigPipe() {
   struct sigaction sa;
   memset(&sa, '\0', sizeof(sa));
   sa.sa_handler = SIG_IGN;
@@ -58,19 +58,19 @@ void handle_for_sigpipe() {
   if (sigaction(SIGPIPE, &sa, NULL)) return;
 }
 
-int check_base_path(char *basePath) {
+int CheckBasePath(char *base_path) {
   struct stat file;
-  if (stat(basePath, &file) == -1) {
+  if (stat(base_path, &file) == -1) {
     return -1;
   }
   // 不是目录 或者不可访问
-  if (!S_ISDIR(file.st_mode) || access(basePath, R_OK) == -1) {
+  if (!S_ISDIR(file.st_mode) || access(base_path, R_OK) == -1) {
     return -1;
   }
   return 0;
 }
 
-bool endsWith(std::string const &str, std::string const &suffix) {
+bool EndsWith(std::string const &str, std::string const &suffix) {
   if (str.length() < suffix.length()) {
     return false;
   }

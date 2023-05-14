@@ -12,13 +12,13 @@
 
 namespace csguide_webserver {
 
-size_t TimerNode::current_msec = 0;  // 当前时间
+size_t TimerNode::current_msec_ = 0;  // 当前时间
 
 const size_t TimerManager::DEFAULT_TIME_OUT = 20 * 1000;  // 20s
 
-TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout) : deleted_(false), httpData_(httpData) {
-  current_time();
-  expiredTime_ = current_msec + timeout;
+TimerNode::TimerNode(std::shared_ptr<HttpData> httpData, size_t timeout) : deleted_(false), http_data_(httpData) {
+    CurrentTime();
+    expired_time_ = current_msec_ + timeout;
 }
 
 TimerNode::~TimerNode() {
@@ -27,24 +27,24 @@ TimerNode::~TimerNode() {
   // weak_ptr<HttpData> std::cout << "TimerNode析构" << std::endl;
   // 析构时如果是被deleted 则httpData为NULL,
   // 不用处理，而如果是超时，则需要删除Epoll中的httpDataMap中
-  if (httpData_) {
-    auto it = Epoll::http_data_map_.find(httpData_->client_socket_->fd);
+  if (http_data_) {
+    auto it = Epoll::http_data_map_.find(http_data_->client_socket_->fd_);
     if (it != Epoll::http_data_map_.end()) {
       Epoll::http_data_map_.erase(it);
     }
   }
 }
 
-void inline TimerNode::current_time() {
+void inline TimerNode::CurrentTime() {
   struct timeval cur;
   gettimeofday(&cur, NULL);
-  current_msec = (cur.tv_sec * 1000) + (cur.tv_usec / 1000);
+    current_msec_ = (cur.tv_sec * 1000) + (cur.tv_usec / 1000);
 }
 
-void TimerNode::deleted() {
+void TimerNode::Deleted() {
   // 删除采用标记删除， 并及时析构HttpData，以关闭描述符
   // 关闭定时器时应该把 httpDataMap 里的HttpData 一起erase
-  httpData_.reset();
+  http_data_.reset();
   deleted_ = true;
 }
 
@@ -52,7 +52,7 @@ void TimerManager::addTimer(std::shared_ptr<HttpData> httpData, size_t timeout) 
   Shared_TimerNode timerNode(new TimerNode(httpData, timeout));
   {
     MutexLockGuard guard(lock_);
-    TimerQueue.push(timerNode);
+    timer_queue_.push(timerNode);
     // 将TimerNode和HttpData关联起来
       httpData->SetTimer(timerNode);
   }
@@ -62,15 +62,15 @@ void TimerManager::handle_expired_event() {
   MutexLockGuard guard(lock_);
   // 更新当前时间
   // std::cout << "开始处理超时事件" << std::endl;
-  TimerNode::current_time();
-  while (!TimerQueue.empty()) {
-    Shared_TimerNode timerNode = TimerQueue.top();
-    if (timerNode->isDeleted()) {
+    TimerNode::CurrentTime();
+  while (!timer_queue_.empty()) {
+    Shared_TimerNode timerNode = timer_queue_.top();
+    if (timerNode->IsDeleted()) {
       // 删除节点
-      TimerQueue.pop();
+      timer_queue_.pop();
     } else if (timerNode->isExpire()) {
       // 过期 删除
-      TimerQueue.pop();
+      timer_queue_.pop();
     } else {
       break;
     }

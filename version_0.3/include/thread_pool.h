@@ -34,9 +34,9 @@ public:
 
   ~ThreadPool();
 
-  bool append(std::shared_ptr<void> arg, std::function<void(std::shared_ptr<void>)> fun);
+  bool Append(std::shared_ptr<void> arg, std::function<void(std::shared_ptr<void>)> fun);
 
-  void shutdown(bool graceful);
+  void Shutdown(bool graceful);
 
 private:
   static void *worker(void *args);
@@ -49,12 +49,12 @@ private:
   Condition condition_;
 
   // 线程池属性
-  int thread_size;
-  int max_queue_size;
-  int started;
+  int thread_size_;
+  int max_queue_size_;
+  int started_;
   int shutdown_;
-  std::vector<pthread_t> threads;
-  std::list<ThreadTask> request_queue;
+  std::vector<pthread_t> threads_;
+  std::list<ThreadTask> request_queue_;
 };
 
 }  // namespace csguide_webserver

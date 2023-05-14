@@ -131,8 +131,8 @@ HttpRequestParser::HTTP_CODE HttpRequestParser::ParseHeaders(char *line, PARSE_S
   //        return NO_REQUEST;
   //    }
 
-  if ((it = HttpRequest::header_map.find(trim(key_s))) != (HttpRequest::header_map.end())) {
-    request.mHeaders.insert(std::make_pair(it->second, trim(value_s)));
+  if ((it = HttpRequest::header_map.find(Trim(key_s))) != (HttpRequest::header_map.end())) {
+    request.mHeaders.insert(std::make_pair(it->second, Trim(value_s)));
   } else {
     // std::cout << "Header no support: " << key << " : " << value << std::endl;
   }

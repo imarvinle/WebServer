@@ -73,8 +73,8 @@ char INDEX_PAGE[] =
 
 char TEST[] = "HELLO WORLD";
 
-void HttpServer::run(int thread_num, int max_queque_size) {
-  ThreadPool threadPool(thread_num, max_queque_size);
+void HttpServer::Run(int thread_num, int max_queque_size) {
+  ThreadPool threadPool(thread_num, max_queue_size);
 
   //        ClientSocket *clientSocket = new ClientSocket;
   //        serverSocket.accept(*clientSocket);
@@ -90,10 +90,10 @@ void HttpServer::run(int thread_num, int max_queque_size) {
   //        }
   std::shared_ptr<HttpData> httpData(new HttpData());
   httpData->epoll_fd = epoll_fd;
-  serverSocket.epoll_fd = epoll_fd;  // 之前就是这里忘了添加,导致穿进去的serverSocket具有不正确的epoll_fd
+  serverSocket.epoll_fd_ = epoll_fd;  // 之前就是这里忘了添加,导致穿进去的serverSocket具有不正确的epoll_fd
 
   __uint32_t event = (EPOLLIN | EPOLLET);
-    Epoll::Addfd(epoll_fd, serverSocket.listen_fd, event, httpData);
+    Epoll::Addfd(epoll_fd, serverSocket.listen_fd_, event, httpData);
 
   while (true) {
     //        epoll_event eventss;
@@ -114,14 +114,14 @@ void HttpServer::run(int thread_num, int max_queque_size) {
     std::vector<std::shared_ptr<HttpData>> events = Epoll::Poll(serverSocket, 1024, -1);
     // FIXME 将事件传递给 线程池
     for (auto& req : events) {
-      threadPool.append(req, std::bind(&HttpServer::do_request, this, std::placeholders::_1));
+        threadPool.Append(req, std::bind(&HttpServer::DoRequest, this, std::placeholders::_1));
     }
     // 处理定时器超时事件
     Epoll::timer_manager_.handle_expired_event();
   }
 }
 
-void HttpServer::do_request(std::shared_ptr<void> arg) {
+void HttpServer::DoRequest(std::shared_ptr<void> arg) {
   std::shared_ptr<HttpData> sharedHttpData = std::static_pointer_cast<HttpData>(arg);
 
   char buffer[BUFFERSIZE];
@@ -134,7 +134,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
   while (true) {
     // FIXME 这里也是同样的，由于是非阻塞IO，所以返回-1
     // 也不一定是错误，还需判断error
-    recv_data = recv(sharedHttpData->client_socket_->fd, buffer + read_index, BUFFERSIZE - read_index, 0);
+    recv_data = recv(sharedHttpData->client_socket_->fd_, buffer + read_index, BUFFERSIZE - read_index, 0);
     if (recv_data == -1) {
       if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
         return;  // FIXME 请求不完整该怎么办，继续加定时器吗？还是直接关闭
@@ -169,19 +169,19 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
             sharedHttpData->response_->SetKeepAlive(false);
         }
       }
-      header(sharedHttpData);
-      getMime(sharedHttpData);
+        Header(sharedHttpData);
+        GetMime(sharedHttpData);
       // FIXME 之前测试时写死的了文件路径导致上服务器出错
       // static_file(sharedHttpData,
       // "/Users/lichunlin/CLionProjects/webserver/version_0.1");
-      FileState fileState = static_file(sharedHttpData, base_path_);
-      send(sharedHttpData, fileState);
+      FileState fileState = StaticFile(sharedHttpData, base_path_);
+        Send(sharedHttpData, fileState);
       // 如果是keep_alive else
       // sharedHttpData将会自动析构释放clientSocket，从而关闭资源
       if (sharedHttpData->response_->KeepAlive()) {
         // FIXME std::cout << "再次添加定时器  keep_alive: " <<
         // sharedHttpData->clientSocket_->fd << std::endl;
-          Epoll::Modfd(sharedHttpData->epoll_fd, sharedHttpData->client_socket_->fd, Epoll::DEFAULT_EVENTS,
+          Epoll::Modfd(sharedHttpData->epoll_fd, sharedHttpData->client_socket_->fd_, Epoll::DEFAULT_EVENTS,
                        sharedHttpData);
         Epoll::timer_manager_.addTimer(sharedHttpData, TimerManager::DEFAULT_TIME_OUT);
       }
@@ -194,7 +194,7 @@ void HttpServer::do_request(std::shared_ptr<void> arg) {
   }
 }
 
-void HttpServer::header(std::shared_ptr<HttpData> httpData) {
+void HttpServer::Header(std::shared_ptr<HttpData>) {
   if (httpData->request_->mVersion == HttpRequest::HTTP_11) {
       httpData->response_->SetVersion(HttpRequest::HTTP_11);
   } else {
@@ -204,7 +204,7 @@ void HttpServer::header(std::shared_ptr<HttpData> httpData) {
 }
 
 // 获取Mime 同时设置path到response
-void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
+void HttpServer::GetMime(std::shared_ptr<HttpData>) {
   std::string filepath = httpData->request_->mUri;
   std::string mime;
   int pos;
@@ -227,12 +227,12 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
         httpData->response_->SetFilePath(filepath);
 }
 
-HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData, const std::string& base_path) {
+HttpServer::FileState HttpServer::StaticFile(std::shared_ptr<HttpData>, const std::string& base_path) {
   struct stat file_stat;
   std::string file = base_path + httpData->response_->FilePath();
   // 如果是 / 结尾，则默认读取 /index.html
   // 扩展，比如访问，csguide.cn/，则默认读取 csguide.cn/index.html
-  if (endsWith(file, "/")) {
+  if (EndsWith(file, "/")) {
     file = file + "index.html";
     // 并且重新设置 mime 为 html
       httpData->response_->SetMime(MimeType("text/html"));
@@ -269,7 +269,7 @@ HttpServer::FileState HttpServer::static_file(std::shared_ptr<HttpData> httpData
   return FILE_OK;
 }
 
-void HttpServer::send(std::shared_ptr<HttpData> httpData, FileState fileState) {
+void HttpServer::Send(std::shared_ptr<HttpData>, FileState) {
   char header[BUFFERSIZE];
   bzero(header, '\0');
   const char* internal_error = "Internal Error";

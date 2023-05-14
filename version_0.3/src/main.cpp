@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
         break;
       }
       case 'r': {
-        int ret = check_base_path(optarg);
+        int ret = CheckBasePath(optarg);
         if (ret == -1) {
           printf(
               "Warning: \"%s\" 不存在或不可访问, "
@@ -113,8 +113,8 @@ int main(int argc, char **argv) {
     printf("线程数:\t%d\n", threadNumber);
     printf("根目录:\t%s\n", basePath.c_str());
   }
-  handle_for_sigpipe();
+    HandleForSigPipe();
 
   HttpServer httpServer(basePath, port);
-  httpServer.run(threadNumber);
+    httpServer.Run(threadNumber);
 }

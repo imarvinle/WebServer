@@ -11,18 +11,18 @@ using namespace std;
 
 namespace csguide_webserver {
 
-std::string &ltrim(string &);
+std::string &Ltrim(string &);
 
-std::string &rtrim(string &);
+std::string &Rtrim(string &);
 
-std::string &trim(string &);
+std::string &Trim(string &);
 
-int setnonblocking(int fd);
+int SetNonBlocking(int fd);
 
-void handle_for_sigpipe();
+void HandleForSigPipe();
 
-int check_base_path(char *basePath);
+int CheckBasePath(char *base_path);
 
-bool endsWith(std::string const &str, std::string const &suffix);
+bool EndsWith(std::string const &str, std::string const &suffix);
 
 }  // namespace csguide_webserver

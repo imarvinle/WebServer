@@ -25,32 +25,32 @@ public:
 
   ~ServerSocket();
 
-  void bind();
+  void Bind();
 
-  void listen();
+  void Listen();
 
-  void close();
+  void Close();
 
-  int accept(ClientSocket &) const;
+  int Accept(ClientSocket &) const;
 
 public:
-  sockaddr_in mAddr;
-  int listen_fd;
-  int epoll_fd;
-  int mPort;
-  const char *mIp;
+  sockaddr_in sockaddr_in_;
+  int listen_fd_;
+  int epoll_fd_;
+  int port_;
+  const char *ip_;
 };
 
 class ClientSocket {
 public:
-  ClientSocket() { fd = -1; };
+  ClientSocket() { fd_ = -1; };
 
   void close();
 
   ~ClientSocket();
 
-  socklen_t mLen;
-  sockaddr_in mAddr;
-  int fd;
+  socklen_t socklen_;
+  sockaddr_in sockaddr_in_;
+  int fd_;
 };
 }  // namespace csguide_webserver

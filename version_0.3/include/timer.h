@@ -22,33 +22,31 @@ public:
   ~TimerNode();
 
 public:
-  bool isDeleted() const { return deleted_; }
+  bool IsDeleted() const { return deleted_; }
 
-  size_t getExpireTime() { return expiredTime_; }
+  size_t GetExpireTime() { return expired_time_; }
 
   bool isExpire() {
     // 平凡调用系统调用不好
     // current_time();
-    return expiredTime_ < current_msec;
+    return expired_time_ < current_msec_;
   }
 
-  void deleted();
+  void Deleted();
 
-  std::shared_ptr<HttpData> getHttpData() { return httpData_; }
+  std::shared_ptr<HttpData> GetHttpData() { return http_data_; }
 
-  static void current_time();
-
-  static size_t current_msec;  // 当前时间
-
+  static void CurrentTime();
 private:
+  static size_t current_msec_;  // 当前时间
   bool deleted_;
-  size_t expiredTime_;  // 毫秒
-  std::shared_ptr<HttpData> httpData_;
+  size_t expired_time_;  // 毫秒
+  std::shared_ptr<HttpData> http_data_;
 };
 
 struct TimerCmp {
   bool operator()(std::shared_ptr<TimerNode> &a, std::shared_ptr<TimerNode> &b) const {
-    return a->getExpireTime() > b->getExpireTime();
+    return a->GetExpireTime() > b->GetExpireTime();
   }
 };
 
@@ -64,7 +62,7 @@ public:
   const static size_t DEFAULT_TIME_OUT;
 
 private:
-  std::priority_queue<Shared_TimerNode, std::deque<Shared_TimerNode>, TimerCmp> TimerQueue;
+  std::priority_queue<Shared_TimerNode, std::deque<Shared_TimerNode>, TimerCmp> timer_queue_;
   MutexLock lock_;
 };
 

@@ -13,38 +13,38 @@
 namespace csguide_webserver {
 
 ThreadPool::ThreadPool(int thread_s, int max_queue_s)
-    : max_queue_size(max_queue_s), thread_size(thread_s), condition_(mutex_), started(0), shutdown_(0) {
+    : max_queue_size_(max_queue_s), thread_size_(thread_s), condition_(mutex_), started_(0), shutdown_(0) {
   if (thread_s <= 0 || thread_s > MAX_THREAD_SIZE) {
-    thread_size = 4;
+      thread_size_ = 4;
   }
 
   if (max_queue_s <= 0 || max_queue_s > MAX_QUEUE_SIZE) {
-    max_queue_size = MAX_QUEUE_SIZE;
+      max_queue_size_ = MAX_QUEUE_SIZE;
   }
   // 分配空间
-  threads.resize(thread_size);
+  threads_.resize(thread_size_);
 
-  for (int i = 0; i < thread_size; i++) {
+  for (int i = 0; i < thread_size_; i++) {
     // 后期可扩展出单独的Thread类，只需要该类拥有run方法即可
-    if (pthread_create(&threads[i], NULL, worker, this) != 0) {
+    if (pthread_create(&threads_[i], NULL, worker, this) != 0) {
       std::cout << "ThreadPool Init error" << std::endl;
       throw std::exception();
     }
-    started++;
+    started_++;
   }
 }
 
 ThreadPool::~ThreadPool() {}
 
-bool ThreadPool::append(std::shared_ptr<void> arg, std::function<void(std::shared_ptr<void>)> fun) {
+bool ThreadPool::Append(std::shared_ptr<void> arg, std::function<void(std::shared_ptr<void>)> fun) {
   if (shutdown_) {
     std::cout << "ThreadPool has shutdown" << std::endl;
     return false;
   }
 
   MutexLockGuard guard(this->mutex_);
-  if (request_queue.size() > max_queue_size) {
-    std::cout << max_queue_size;
+  if (request_queue_.size() > max_queue_size_) {
+    std::cout << max_queue_size_;
     std::cout << "ThreadPool too many requests" << std::endl;
     return false;
   }
@@ -52,7 +52,7 @@ bool ThreadPool::append(std::shared_ptr<void> arg, std::function<void(std::share
   threadTask.arg = arg;
   threadTask.process = fun;
 
-  request_queue.push_back(threadTask);
+  request_queue_.push_back(threadTask);
   //    if (request_queue.size() == 1) {
   //        condition_.notify();
   //    }
@@ -62,7 +62,7 @@ bool ThreadPool::append(std::shared_ptr<void> arg, std::function<void(std::share
   return true;
 }
 
-void ThreadPool::shutdown(bool graceful) {
+void ThreadPool::Shutdown(bool graceful) {
   {
     MutexLockGuard guard(this->mutex_);
     if (shutdown_) {
@@ -71,8 +71,8 @@ void ThreadPool::shutdown(bool graceful) {
     shutdown_ = graceful ? graceful_mode : immediate_mode;
       condition_.NotifyAll();
   }
-  for (int i = 0; i < thread_size; i++) {
-    if (pthread_join(threads[i], NULL) != 0) {
+  for (int i = 0; i < thread_size_; i++) {
+    if (pthread_join(threads_[i], NULL) != 0) {
       std::cout << "pthread_join error" << std::endl;
     }
   }
@@ -95,16 +95,16 @@ void ThreadPool::run() {
     {
       MutexLockGuard guard(this->mutex_);
       // 无任务 且未shutdown 则条件等待, 注意此处应使用while而非if
-      while (request_queue.empty() && !shutdown_) {
+      while (request_queue_.empty() && !shutdown_) {
           condition_.Wait();
       }
 
-      if ((shutdown_ == immediate_mode) || (shutdown_ == graceful_mode && request_queue.empty())) {
+      if ((shutdown_ == immediate_mode) || (shutdown_ == graceful_mode && request_queue_.empty())) {
         break;
       }
       // FIFO
-      requestTask = request_queue.front();
-      request_queue.pop_front();
+      requestTask = request_queue_.front();
+      request_queue_.pop_front();
     }
     requestTask.process(requestTask.arg);
   }
