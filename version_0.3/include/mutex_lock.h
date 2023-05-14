@@ -14,9 +14,13 @@ namespace csguide_webserver {
 class MutexLock : public Noncopyable {
 public:
   MutexLock() { pthread_mutex_init(&mutex_, NULL); }
+
   ~MutexLock() { pthread_mutex_destroy(&mutex_); }
-  void lock() { pthread_mutex_lock(&mutex_); }
-  void unlock() { pthread_mutex_unlock(&mutex_); }
+
+  void inline lock() { pthread_mutex_lock(&mutex_); }
+
+  void inline unlock() { pthread_mutex_unlock(&mutex_); }
+
   pthread_mutex_t *getMutex() { return &mutex_; }
 
 private:

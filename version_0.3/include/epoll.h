@@ -19,6 +19,7 @@
 namespace csguide_webserver {
 
 class Epoll {
+  
 public:
   static int init(int max_events);
 
