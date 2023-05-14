@@ -75,19 +75,7 @@ char TEST[] = "HELLO WORLD";
 
 void HttpServer::Run(int max_queue_size) {
   ThreadPool threadPool(server_conf_.thread_num, max_queue_size);
-
-  //        ClientSocket *clientSocket = new ClientSocket;
-  //        serverSocket.accept(*clientSocket);
-  //        thread::ThreadTask *threadTask = new ThreadTask;
-  //        threadTask->process = std::bind(&HttpServer::do_request, this,
-  //        std::placeholders::_1); threadTask->arg =
-  //        static_cast<void*>(clientSocket); threadPool.append(threadTask);
   int epoll_fd = Epoll::Init(1024);
-  // std::cout << "a|epoll_fd=" << epoll_fd << std::endl;
-  //        int ret = setnonblocking(epoll_fd);
-  //        if (ret < 0) {
-  //            std::cout << "epoll_fd set nonblocking error" << std::endl;
-  //        }
   std::shared_ptr<HttpData> httpData(new HttpData());
   httpData->epoll_fd = epoll_fd;
   serverSocket.epoll_fd_ = epoll_fd;  // 之前就是这里忘了添加,导致穿进去的serverSocket具有不正确的epoll_fd
@@ -96,21 +84,6 @@ void HttpServer::Run(int max_queue_size) {
     Epoll::Addfd(epoll_fd, serverSocket.listen_fd_, event, httpData);
 
   while (true) {
-    //        epoll_event eventss;
-    //        epoll_event events[1024];
-    //        eventss.data.fd = serverSocket.listen_fd;
-    //        eventss.events = EPOLLIN | EPOLLET;
-    //
-    //        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, serverSocket.listen_fd,
-    //        &eventss); int ret = epoll_wait(epoll_fd, events, 1024, -1); if
-    //        (ret > 0) {
-    //            std::cout << "ret =" << ret << std::endl;
-    //        } else {
-    //            std::cout << "ret =" << ret << std::endl;
-    //        }
-
-    // test end
-
     std::vector<std::shared_ptr<HttpData>> events = Epoll::Poll(serverSocket, 1024, -1);
     // FIXME 将事件传递给 线程池
     for (auto& req : events) {
