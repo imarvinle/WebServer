@@ -27,18 +27,18 @@ public:
       serverSocket.Listen();
   }
 
-  void Run(int, int max_queue_size = 10000);
+  void Run(int thread_num, int max_queue_size = 10000);
 
   void DoRequest(std::shared_ptr<void> arg);
 
 private:
-  void Header(std::shared_ptr<HttpData>);
+  void Header(std::shared_ptr<HttpData> http_data);
 
-  FileState StaticFile(std::shared_ptr<HttpData>, const std::string& base_path);
+  FileState StaticFile(std::shared_ptr<HttpData> http_data, const std::string& base_path);
 
-  void Send(std::shared_ptr<HttpData>, FileState);
+  void Send(std::shared_ptr<HttpData> http_data, FileState file_state);
 
-  void GetMime(std::shared_ptr<HttpData>);
+  void GetMime(std::shared_ptr<HttpData> http_data);
 
 private:
   std::string base_path_;

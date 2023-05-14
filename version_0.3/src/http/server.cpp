@@ -73,7 +73,7 @@ char INDEX_PAGE[] =
 
 char TEST[] = "HELLO WORLD";
 
-void HttpServer::Run(int thread_num, int max_queque_size) {
+void HttpServer::Run(int thread_num, int max_queue_size) {
   ThreadPool threadPool(thread_num, max_queue_size);
 
   //        ClientSocket *clientSocket = new ClientSocket;
@@ -194,18 +194,18 @@ void HttpServer::DoRequest(std::shared_ptr<void> arg) {
   }
 }
 
-void HttpServer::Header(std::shared_ptr<HttpData>) {
-  if (httpData->request_->mVersion == HttpRequest::HTTP_11) {
-      httpData->response_->SetVersion(HttpRequest::HTTP_11);
+void HttpServer::Header(std::shared_ptr<HttpData> http_data) {
+  if (http_data->request_->mVersion == HttpRequest::HTTP_11) {
+      http_data->response_->SetVersion(HttpRequest::HTTP_11);
   } else {
-      httpData->response_->SetVersion(HttpRequest::HTTP_10);
+      http_data->response_->SetVersion(HttpRequest::HTTP_10);
   }
-    httpData->response_->AddHeader("Server", "LC WebServer");
+    http_data->response_->AddHeader("Server", "LC WebServer");
 }
 
 // 获取Mime 同时设置path到response
-void HttpServer::GetMime(std::shared_ptr<HttpData>) {
-  std::string filepath = httpData->request_->mUri;
+void HttpServer::GetMime(std::shared_ptr<HttpData> http_data) {
+  std::string filepath = http_data->request_->mUri;
   std::string mime;
   int pos;
   //    std::cout << "uri: " << filepath << std::endl;
@@ -220,30 +220,30 @@ void HttpServer::GetMime(std::shared_ptr<HttpData>) {
   decltype(Mime_map)::iterator it;
 
   if ((it = Mime_map.find(mime)) != Mime_map.end()) {
-      httpData->response_->SetMime(it->second);
+      http_data->response_->SetMime(it->second);
   } else {
-      httpData->response_->SetMime(Mime_map.find("default")->second);
+      http_data->response_->SetMime(Mime_map.find("default")->second);
   }
-        httpData->response_->SetFilePath(filepath);
+        http_data->response_->SetFilePath(filepath);
 }
 
-HttpServer::FileState HttpServer::StaticFile(std::shared_ptr<HttpData>, const std::string& base_path) {
+HttpServer::FileState HttpServer::StaticFile(std::shared_ptr<HttpData> http_data, const std::string& base_path) {
   struct stat file_stat;
-  std::string file = base_path + httpData->response_->FilePath();
+  std::string file = base_path + http_data->response_->FilePath();
   // 如果是 / 结尾，则默认读取 /index.html
   // 扩展，比如访问，csguide.cn/，则默认读取 csguide.cn/index.html
   if (EndsWith(file, "/")) {
     file = file + "index.html";
     // 并且重新设置 mime 为 html
-      httpData->response_->SetMime(MimeType("text/html"));
+      http_data->response_->SetMime(MimeType("text/html"));
   }
 
   // 文件不存在
   if (stat(file.c_str(), &file_stat) < 0) {
     // FIXME 设置Mime 为 html
-      httpData->response_->SetMime(MimeType("text/html"));
-      httpData->response_->SetStatusCode(HttpResponse::k404NotFound);
-      httpData->response_->SetStatusMsg("Not Found");
+      http_data->response_->SetMime(MimeType("text/html"));
+      http_data->response_->SetStatusCode(HttpResponse::k404NotFound);
+      http_data->response_->SetStatusMsg("Not Found");
     // 废弃， 404就不需要设置filepath
     // httpData->response_->setFilePath(std::string(base_path_)+"/404.html");
     // std::cout << "File Not Found: " <<   file << std::endl;
@@ -253,32 +253,32 @@ HttpServer::FileState HttpServer::StaticFile(std::shared_ptr<HttpData>, const st
   // 不是普通文件或无访问权限
   if (!S_ISREG(file_stat.st_mode)) {
     // FIXME 设置Mime 为 html
-      httpData->response_->SetMime(MimeType("text/html"));
-      httpData->response_->SetStatusCode(HttpResponse::k403forbiden);
-      httpData->response_->SetStatusMsg("ForBidden");
+      http_data->response_->SetMime(MimeType("text/html"));
+      http_data->response_->SetStatusCode(HttpResponse::k403forbiden);
+      http_data->response_->SetStatusMsg("ForBidden");
     // 废弃， 403就不需要设置filepath
     // httpData->response_->setFilePath(std::string(base_path_)+"/403.html");
     std::cout << "not normal file" << std::endl;
     return FILE_FORBIDDEN;
   }
 
-    httpData->response_->SetStatusCode(HttpResponse::k200Ok);
-    httpData->response_->SetStatusMsg("OK");
-    httpData->response_->SetFilePath(file);
+    http_data->response_->SetStatusCode(HttpResponse::k200Ok);
+    http_data->response_->SetStatusMsg("OK");
+    http_data->response_->SetFilePath(file);
   //    std::cout << "文件存在 - ok" << std::endl;
   return FILE_OK;
 }
 
-void HttpServer::Send(std::shared_ptr<HttpData>, FileState) {
+void HttpServer::Send(std::shared_ptr<HttpData> http_data, FileState file_state) {
   char header[BUFFERSIZE];
   bzero(header, '\0');
   const char* internal_error = "Internal Error";
   struct stat file_stat;
-    httpData->response_->AppenBuffer(header);
+    http_data->response_->AppenBuffer(header);
   // 404
-  if (fileState == FIlE_NOT_FOUND) {
+  if (file_state == FIlE_NOT_FOUND) {
     // 如果是 '/'开头就发送默认页
-    if (httpData->response_->FilePath() == std::string("/")) {
+    if (http_data->response_->FilePath() == std::string("/")) {
       // 现在使用测试页面
       sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(INDEX_PAGE));
       sprintf(header, "%s%s", header, INDEX_PAGE);
@@ -286,46 +286,46 @@ void HttpServer::Send(std::shared_ptr<HttpData>, FileState) {
       sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(NOT_FOUND_PAGE));
       sprintf(header, "%s%s", header, NOT_FOUND_PAGE);
     }
-    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
+    ::send(http_data->client_socket_->fd_, header, strlen(header), 0);
     return;
   }
 
-  if (fileState == FILE_FORBIDDEN) {
+  if (file_state == FILE_FORBIDDEN) {
     sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(FORBIDDEN_PAGE));
     sprintf(header, "%s%s", header, FORBIDDEN_PAGE);
-    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
+    ::send(http_data->client_socket_->fd_, header, strlen(header), 0);
     return;
   }
   // 获取文件状态
-  if (stat(httpData->response_->FilePath().c_str(), &file_stat) < 0) {
+  if (stat(http_data->response_->FilePath().c_str(), &file_stat) < 0) {
     sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
     sprintf(header, "%s%s", header, internal_error);
-    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
+    ::send(http_data->client_socket_->fd_, header, strlen(header), 0);
     return;
   }
 
-  int filefd = ::open(httpData->response_->FilePath().c_str(), O_RDONLY);
+  int filefd = ::open(http_data->response_->FilePath().c_str(), O_RDONLY);
   // 内部错误
   if (filefd < 0) {
     std::cout << "打开文件失败" << std::endl;
     sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
     sprintf(header, "%s%s", header, internal_error);
-    ::send(httpData->client_socket_->fd, header, strlen(header), 0);
+    ::send(http_data->client_socket_->fd_, header, strlen(header), 0);
     close(filefd);
     return;
   }
 
   sprintf(header, "%sContent-length: %d\r\n\r\n", header, file_stat.st_size);
-  ::send(httpData->client_socket_->fd, header, strlen(header), 0);
+  ::send(http_data->client_socket_->fd_, header, strlen(header), 0);
   void* mapbuf = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, filefd, 0);
-  ::send(httpData->client_socket_->fd, mapbuf, file_stat.st_size, 0);
+  ::send(http_data->client_socket_->fd_, mapbuf, file_stat.st_size, 0);
   munmap(mapbuf, file_stat.st_size);
   close(filefd);
   return;
 err:
   sprintf(header, "%sContent-length: %d\r\n\r\n", header, strlen(internal_error));
   sprintf(header, "%s%s", header, internal_error);
-  ::send(httpData->client_socket_->fd, header, strlen(header), 0);
+  ::send(http_data->client_socket_->fd_, header, strlen(header), 0);
   return;
 }
 
