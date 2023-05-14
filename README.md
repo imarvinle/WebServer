@@ -43,9 +43,9 @@
 ```
 cmake . && make 
 
-./webserver [-p port] [-t thread_numbers]  [-r website_root_path] [-d daemon_run]
-
+./webserver [-f config_file] 
 ```
+配置文件可以使用默认的 config.ini
 
 ## 核心功能及技术
 
