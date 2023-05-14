@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#include "../include/Util.h"
+#include "../include/util.h"
 
 using namespace std;
 

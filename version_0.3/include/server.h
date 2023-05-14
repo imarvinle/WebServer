@@ -7,10 +7,10 @@
 
 #include <memory>
 
-#include "HttpData.h"
-#include "HttpParse.h"
-#include "HttpResponse.h"
-#include "Socket.h"
+#include "http_data.h"
+#include "http_parse.h"
+#include "http_response.h"
+#include "socket.h"
 
 namespace csguide_webserver {
 

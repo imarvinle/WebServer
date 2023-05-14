@@ -6,8 +6,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "../include/Epoll.h"
-#include "../include/Timer.h"
+#include "../include/epoll.h"
+#include "../include/timer.h"
 
 namespace csguide_webserver {
 

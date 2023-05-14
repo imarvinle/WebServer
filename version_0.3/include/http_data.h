@@ -7,10 +7,10 @@
 
 #include <memory>
 
-#include "HttpParse.h"
-#include "HttpResponse.h"
-#include "Socket.h"
-#include "Timer.h"
+#include "http_parse.h"
+#include "http_response.h"
+#include "socket.h"
+#include "timer.h"
 
 namespace csguide_webserver {
 

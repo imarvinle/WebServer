@@ -37,16 +37,16 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 
 set(SOURCE_FILES
-        version_0.3/src/http/HttpRequest.cpp
-        version_0.3/src/http/HttpData.cpp
-        version_0.3/src/http/HttpParse.cpp
-        version_0.3/src/http/HttpResponse.cpp
-        version_0.3/src/http/Server.cpp
-        version_0.3/src/Socket.cpp
-        version_0.3/src/ThreadPool.cpp
-        version_0.3/src/Timer.cpp
-        version_0.3/src/Util.cpp
-        version_0.3/src/Epoll.cpp
+        version_0.3/src/http/http_request.cpp
+        version_0.3/src/http/http_data.cpp
+        version_0.3/src/http/http_parse.cpp
+        version_0.3/src/http/http_response.cpp
+        version_0.3/src/http/server.cpp
+        version_0.3/src/socket.cpp
+        version_0.3/src/thread_pool.cpp
+        version_0.3/src/timer.cpp
+        version_0.3/src/util.cpp
+        version_0.3/src/epoll.cpp
         version_0.3/src/main.cpp
         )
 

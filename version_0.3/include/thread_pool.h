@@ -12,8 +12,8 @@
 #include <memory>
 #include <vector>
 
-#include "Condition.h"
-#include "MutexLock.h"
+#include "condition.h"
+#include "mutex_lock.h"
 #include "noncopyable.h"
 
 namespace csguide_webserver {

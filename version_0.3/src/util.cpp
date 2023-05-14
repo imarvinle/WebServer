@@ -11,7 +11,7 @@
 #include <cstring>
 #include <string>
 
-#include "../include/Util.h"
+#include "../include/util.h"
 
 namespace csguide_webserver {
 

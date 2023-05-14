@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "../../include/HttpResponse.h"
+#include "../../include/http_response.h"
 
 namespace csguide_webserver {
 

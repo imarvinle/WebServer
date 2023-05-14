@@ -16,13 +16,13 @@
 #include <string>
 #include <vector>
 
-#include "../../include/Epoll.h"
-#include "../../include/HttpData.h"
-#include "../../include/HttpParse.h"
-#include "../../include/HttpResponse.h"
-#include "../../include/Server.h"
-#include "../../include/ThreadPool.h"
-#include "../../include/Util.h"
+#include "../../include/epoll.h"
+#include "../../include/http_data.h"
+#include "../../include/http_parse.h"
+#include "../../include/http_response.h"
+#include "../../include/server.h"
+#include "../../include/thread_pool.h"
+#include "../../include/util.h"
 
 namespace csguide_webserver {
 
@@ -238,7 +238,7 @@ void HttpServer::getMime(std::shared_ptr<HttpData> httpData) {
 }
 
 HttpServer::FileState HttpServer::static_file(
-    std::shared_ptr<HttpData> httpData, const std::string& base_path) {
+        std::shared_ptr<HttpData> httpData, const std::string& base_path) {
   struct stat file_stat;
   std::string file = base_path + httpData->response_->filePath();
   // 如果是 / 结尾，则默认读取 /index.html

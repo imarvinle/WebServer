@@ -8,9 +8,9 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../include/HttpParse.h"
-#include "../../include/HttpRequest.h"
-#include "../../include/Util.h"
+#include "../../include/http_parse.h"
+#include "../../include/http_request.h"
+#include "../../include/util.h"
 
 namespace csguide_webserver {
 

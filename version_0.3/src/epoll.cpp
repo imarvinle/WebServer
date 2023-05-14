@@ -9,8 +9,8 @@
 #include <iostream>
 #include <vector>
 
-#include "../include/Epoll.h"
-#include "../include/Util.h"
+#include "../include/epoll.h"
+#include "../include/util.h"
 
 namespace csguide_webserver {
 

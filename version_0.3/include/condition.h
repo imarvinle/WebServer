@@ -7,12 +7,12 @@
 
 #include <pthread.h>
 
-#include "MutexLock.h"
+#include "mutex_lock.h"
 #include "noncopyable.h"
 
 namespace csguide_webserver {
 
-class Condition : public noncopyable {
+class Condition : public Noncopyable {
   public:
   explicit Condition(MutexLock &mutex) : mutex_(mutex) {
     pthread_cond_init(&cond_, NULL);

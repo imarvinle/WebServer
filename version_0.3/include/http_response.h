@@ -9,7 +9,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "HttpRequest.h"
+#include "http_request.h"
 
 namespace csguide_webserver {
 

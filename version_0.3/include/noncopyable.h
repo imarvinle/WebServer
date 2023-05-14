@@ -6,13 +6,13 @@
 #pragma once
 
 namespace csguide_webserver {
-class noncopyable {
+class Noncopyable {
   public:
-  noncopyable(const noncopyable&) = delete;
-  noncopyable& operator=(const noncopyable&) = delete;
+  Noncopyable(const Noncopyable&) = delete;
+  Noncopyable& operator=(const Noncopyable&) = delete;
 
   protected:
-  noncopyable() = default;
-  ~noncopyable() = default;
+  Noncopyable() = default;
+  ~Noncopyable() = default;
 };
 }  // namespace csguide_webserver

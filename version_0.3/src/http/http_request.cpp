@@ -3,7 +3,7 @@
  * Author: xiaobei (https://github.com/imarvinle)
  */
 
-#include "../../include/HttpRequest.h"
+#include "../../include/http_request.h"
 
 namespace csguide_webserver {
 

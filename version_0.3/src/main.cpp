@@ -15,8 +15,8 @@
 #include <iostream>
 #include <string>
 
-#include "../include/Server.h"
-#include "../include/Util.h"
+#include "../include/server.h"
+#include "../include/util.h"
 
 using namespace csguide_webserver;
 

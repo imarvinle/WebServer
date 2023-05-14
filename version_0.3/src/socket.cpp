@@ -6,8 +6,8 @@
 #include <cstdio>
 #include <cstring>
 
-#include "../include/Socket.h"
-#include "../include/Util.h"
+#include "../include/socket.h"
+#include "../include/util.h"
 
 namespace csguide_webserver {
 

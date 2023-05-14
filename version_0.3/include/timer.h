@@ -9,8 +9,8 @@
 #include <memory>
 #include <queue>
 
-#include "HttpData.h"
-#include "MutexLock.h"
+#include "http_data.h"
+#include "mutex_lock.h"
 
 namespace csguide_webserver {
 

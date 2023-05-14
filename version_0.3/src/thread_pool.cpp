@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include "../include/ThreadPool.h"
+#include "../include/thread_pool.h"
 
 namespace csguide_webserver {
 

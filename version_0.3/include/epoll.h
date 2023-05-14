@@ -12,9 +12,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "HttpData.h"
-#include "Socket.h"
-#include "Timer.h"
+#include "http_data.h"
+#include "socket.h"
+#include "timer.h"
 
 namespace csguide_webserver {
 
