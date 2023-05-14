@@ -1,0 +1,11 @@
+---
+# 语言: None, Cpp, Java, JavaScript, ObjC, Proto, TableGen, TextProto
+Language: Cpp
+# 基于某一主题上的修改
+BasedOnStyle: Google
+# 缩进宽度
+IndentWidth: 2
+# 缩进case标签
+IndentCaseLabels: true
+# 访问说明符(public、private等)的偏移
+AccessModifierOffset: -4
